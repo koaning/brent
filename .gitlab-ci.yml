@@ -7,7 +7,7 @@ test:
   stage: unittest
   script:
     - pip3.6 install --upgrade pip
-    - pip3.6 install -r requirements.txt
+    - pip3.6 install -e .
     - pytest --verbose --durations 0
 
 style:
