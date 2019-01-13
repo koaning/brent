@@ -38,6 +38,7 @@ def test_nodes_to_handle2():
     df = pd.DataFrame({"a": [1, 0, 1, 0, 1], "b": [1, 1, 1, 0, 0], "c": [0, 0, 1, 0, 1]})
     dag = DAG(df).add_edge("a", "b").add_edge("c", "b")
     assert _nodes_to_handle(dag, nodes_done=[]) == ("a", "c",)
+    # make sure we get all root nodes before moving a layer deeper
     assert _nodes_to_handle(dag, nodes_done=["a"]) == ("c",)
     assert _nodes_to_handle(dag, nodes_done=["c"]) == ("a",)
     assert _nodes_to_handle(dag, nodes_done=["a", "c"]) == ("b",)

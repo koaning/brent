@@ -23,6 +23,14 @@ def _nodes_to_handle(dag, nodes_done=set()):
     return tuple(x for x in graph.nodes() if graph.in_degree(x) == 0)
 
 
+def _group_probs(dataf, parents):
+    sum_per_group = dataf.groupby(parents).sum()['n'].reset_index()
+    return (dataf
+            .merge(sum_per_group, on=parents)
+            .assign(p=lambda d: d.n_x/d.n_y)
+            .drop(columns=["n_x", "n_y"]))
+
+
 class DAG:
     def __init__(self, dataframe: pd.DataFrame):
         self._is_baked = False
