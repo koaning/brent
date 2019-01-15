@@ -1,10 +1,9 @@
-import random
-import tqdm
+import numpy as np
+import pandas as pd
 
 
-def simulate():
-    return sum(random.random() for i in tqdm.tqdm(range(100_000_000)))
-
-
-if __name__ == "__main__":
-    print(simulate())
+def make_fake_df(nodes=6):
+    letters = 'abcdefghijklmnopqrstuvwxyz'
+    if nodes > 26:
+        raise ValueError('only allow 26 letters in the alfabet')
+    return pd.DataFrame({k: np.random.randint(0, 2, 100) for k in letters[:nodes]})

@@ -1,5 +1,8 @@
+import itertools as it
+
 import pandas as pd
 import networkx as nx
+from graphviz import Digraph
 
 
 def _calc_prior_discrete(dataf, name):
@@ -53,20 +56,29 @@ class DAG:
         return self
 
     def children(self, node):
-        return list(self.graph.successors(node))
+        return set(self.graph.successors(node))
 
     def parents(self, node):
-        return list(self.graph.predecessors(node))
+        return set(self.graph.predecessors(node))
 
     def prob_paths(self, node_a, node_b):
         pass
+
+    def independences(self):
+        for node in self.graph.nodes():
+            children = [c for c in self.children(node) if len(self.parents(c) - {node}) == 0]
+            for n1, n2 in it.combinations(children, 2):
+                print(f"({n1} __||__ {n2}) | {node}")
 
     def bake(self):
         self._is_baked = True
         return self
 
     def plot(self):
-        nx.draw(self.graph, node_size=500, with_labels=True, node_color="white")
+        d = Digraph()
+        for n1, n2 in self.graph.edges:
+            d.edge(n1, n2)
+        return d
 
     def nx_plot(self, **kwargs):
-        nx.draw(self.graph, **kwargs)
+        nx.draw(self.graph, node_size=500, with_labels=True, node_color="white", **kwargs)
