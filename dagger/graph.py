@@ -52,6 +52,15 @@ class DAG:
         self.graph.add_edge(cause, effect)
         return self
 
+    def children(self, node):
+        return list(self.graph.successors(node))
+
+    def parents(self, node):
+        return list(self.graph.predecessors(node))
+
+    def prob_paths(self, node_a, node_b):
+        pass
+
     def bake(self):
         self._is_baked = True
         return self
