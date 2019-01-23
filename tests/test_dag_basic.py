@@ -28,3 +28,17 @@ def test_parent_child1(simple_df1):
     assert set(dag.parents("b")) == {"a", "c"}
     assert set(dag.parents("c")) == {"a"}
 
+
+def test_connections1(simple_df1):
+    dag = DAG(simple_df1).add_edge("a", "b").add_edge("c", "b").add_edge("a", "c")
+    assert set(dag.connections("a")) == {"b", "c"}
+    assert set(dag.connections("b")) == {"a", "c"}
+    assert set(dag.connections("c")) == {"a", "b"}
+
+
+def test_connections2(simple_df1):
+    dag = DAG(simple_df1).add_edge("a", "b").add_edge("c", "b")
+    assert set(dag.connections("a")) == {"b"}
+    assert set(dag.connections("b")) == {"a", "c"}
+    assert set(dag.connections("c")) == {"b"}
+

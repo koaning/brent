@@ -6,6 +6,7 @@ stages:
 test:
   stage: unittest
   script:
+    - apt-get install graphviz
     - pip3.6 install --upgrade pip flake8
     - pip3.6 install -e .
     - pytest --verbose --durations 0 --nbval-lax
