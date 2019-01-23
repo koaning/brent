@@ -2,7 +2,11 @@
 
 ## internals
 
+Suppose we have a graph like below. 
+
 ![](images/dag1.png)
+
+Calculating the marginal probability is defined via; 
 
 ```math
 p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
@@ -10,11 +14,11 @@ p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
 
 ## planned usage 
 
-```
+```python
 from dagger import Graph, Query
 dag = Graph(data=df)
 
-dag.add_edge("smoking""tar")
+dag.add_edge("smoking", "tar")
 dag.add_edge("tar", "cancer")
 dag.add_edge("smoking", "cancer")
 ```

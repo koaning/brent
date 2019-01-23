@@ -8,7 +8,6 @@ from dagger.common import normalise
 
 class DAG:
     def __init__(self, dataframe: pd.DataFrame):
-        self._is_baked = False
         self._df = dataframe
         self.graph = nx.DiGraph()
         for node in self._df.columns:
@@ -112,6 +111,3 @@ class DAG:
 
     def nx_plot(self, **kwargs):
         nx.draw(self.graph, node_size=500, with_labels=True, node_color="white", **kwargs)
-
-    def query(self, query):
-        pass
