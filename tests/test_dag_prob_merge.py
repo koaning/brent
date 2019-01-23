@@ -16,12 +16,23 @@ def basic_dag():
 
 
 def test_marginal_table(basic_dag):
+    colnames = ["a", "b", "c", "d", "e"]
     marginal = (basic_dag.calc_node_table("a")
                 .pipe(basic_dag.merge_probs, that_df=basic_dag.calc_node_table("b"))
                 .pipe(basic_dag.merge_probs, that_df=basic_dag.calc_node_table("c"))
                 .pipe(basic_dag.merge_probs, that_df=basic_dag.calc_node_table("d"))
                 .pipe(basic_dag.merge_probs, that_df=basic_dag.calc_node_table("e")))
-    assert marginal.equals(basic_dag.marginal_table)
+    a = marginal.sort_values(colnames).reset_index()[colnames + ["prob"]]
+    b = basic_dag.marginal_table.sort_values(colnames).reset_index()[colnames + ["prob"]]
+    assert a.equals(b)
+
+
+def test_calc_node_table(basic_dag):
+    assert set(basic_dag.calc_node_table("a").columns) == {"a", "prob"}
+    assert set(basic_dag.calc_node_table("b").columns) == {"a", "b", "c", "prob"}
+    assert set(basic_dag.calc_node_table("c").columns) == {"a", "c", "prob"}
+    assert set(basic_dag.calc_node_table("d").columns) == {"d", "prob"}
+    assert set(basic_dag.calc_node_table("e").columns) == {"e", "prob"}
 
 
 def test_merge_probs_simple(basic_dag):

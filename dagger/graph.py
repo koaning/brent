@@ -134,6 +134,8 @@ class DAG:
 
     def plot(self):
         d = Digraph()
+        for n in self.graph.nodes:
+            d.node(n)
         for n1, n2 in self.graph.edges:
             d.edge(n1, n2)
         return d
