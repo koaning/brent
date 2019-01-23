@@ -4,7 +4,9 @@
 
 ![](images/dag1.png)
 
-$$ p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)$$
+```math
+p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
+```
 
 ## planned usage 
 
