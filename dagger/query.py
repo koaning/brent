@@ -1,5 +1,3 @@
-import networkx as nx
-
 from dagger.graph import DAG
 
 
@@ -10,7 +8,7 @@ class DAG:
         self.do = {}
 
     def given(self, plot=False, **kwargs):
-
+        pass
 
     def do(self, plot=False, **kwargs):
         if plot:

@@ -37,17 +37,17 @@ def test_calc_node_table(basic_dag):
 
 def test_merge_probs_simple(basic_dag):
     res1 = (basic_dag.marginal_table
-        .groupby(['d'])['prob'].mean()
-        .reset_index()
-        .assign(prob=lambda d: normalise(d.prob))
-        .to_dict("list")["prob"])
+            .groupby(['d'])['prob'].mean()
+            .reset_index()
+            .assign(prob=lambda d: normalise(d.prob))
+            .to_dict("list")["prob"])
     assert res1[0] == approx(.625, abs=0.01)
     assert res1[1] == approx(.375, abs=0.01)
 
     res2 = (basic_dag.marginal_table
-        .groupby(['e'])['prob'].mean()
-        .reset_index()
-        .assign(prob=lambda d: normalise(d.prob))
-        .to_dict("list")["prob"])
+            .groupby(['e'])['prob'].mean()
+            .reset_index()
+            .assign(prob=lambda d: normalise(d.prob))
+            .to_dict("list")["prob"])
     assert res2[0] == approx(.5, abs=0.01)
     assert res2[1] == approx(.5, abs=0.01)

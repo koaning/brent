@@ -1,5 +1,3 @@
-import itertools as it
-
 import pandas as pd
 import networkx as nx
 from graphviz import Digraph

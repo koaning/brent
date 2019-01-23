@@ -11,4 +11,3 @@ def make_fake_df(nodes=6):
 
 def normalise(x):
     return x / x.sum()
-

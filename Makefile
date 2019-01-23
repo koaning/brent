@@ -14,3 +14,5 @@ test:
 clean:
 	rm -rf .pytest_cache
 	rm -rf dagger.egg-info
+
+check: test flake

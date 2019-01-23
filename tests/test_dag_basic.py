@@ -41,4 +41,3 @@ def test_connections2(simple_df1):
     assert set(dag.connections("a")) == {"b"}
     assert set(dag.connections("b")) == {"a", "c"}
     assert set(dag.connections("c")) == {"b"}
-
