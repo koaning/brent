@@ -1,6 +1,10 @@
 # dagger
 
+## internals
+
 ![](images/dag1.png)
+
+$$ p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)$$
 
 ## planned usage 
 
@@ -8,13 +12,9 @@
 from dagger import Graph, Query
 dag = Graph(data=df)
 
-dag.add_edge(cause="smoking", effect="tar")
-dag.add_edge(cause="tar", effect="cancer")
-dag.add_edge(cause="smoking", effect="cancer")
-
-dag.add_edge(causes=[...], effect="cancer")
-
-Query(dag=dag).do().given().counterfact()
+dag.add_edge("smoking""tar")
+dag.add_edge("tar", "cancer")
+dag.add_edge("smoking", "cancer")
 ```
 
 ## project structure 
