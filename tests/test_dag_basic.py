@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from dagger.graph import DAG, _nodes_to_handle
+from dagger.graph import DAG
 
 
 @pytest.fixture()
@@ -17,22 +17,6 @@ def test_origin_nodes_1(simple_df1):
 def test_origin_nodes_2(simple_df1):
     dag = DAG(simple_df1).add_edge("a", "b").add_edge("c", "b")
     assert dag.origin_nodes == ("a", "c")
-
-
-def test_nodes_to_handle1(simple_df1):
-    dag = DAG(simple_df1).add_edge("a", "b").add_edge("b", "c").add_edge("a", "c")
-    assert _nodes_to_handle(dag, nodes_done=[]) == ("a",)
-    assert _nodes_to_handle(dag, nodes_done=["a"]) == ("b",)
-    assert _nodes_to_handle(dag, nodes_done=["a", "b"]) == ("c",)
-
-
-def test_nodes_to_handle2(simple_df1):
-    dag = DAG(simple_df1).add_edge("a", "b").add_edge("c", "b")
-    assert _nodes_to_handle(dag, nodes_done=[]) == ("a", "c",)
-    # make sure we get all root nodes before moving a layer deeper
-    assert _nodes_to_handle(dag, nodes_done=["a"]) == ("c",)
-    assert _nodes_to_handle(dag, nodes_done=["c"]) == ("a",)
-    assert _nodes_to_handle(dag, nodes_done=["a", "c"]) == ("b",)
 
 
 def test_parent_child1(simple_df1):

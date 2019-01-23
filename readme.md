@@ -1,5 +1,7 @@
 # dagger
 
+![](images/dag1.png)
+
 ## planned usage 
 
 ```

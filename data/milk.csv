@@ -1,0 +1,103 @@
+Rank,Country,Milk consumption per capita (kg)
+1,Finland,361.19
+2,Sweden,355.86
+3,Netherlands,320.15
+4,Switzerland,315.78
+5,Greece,314.69
+6,Montenegro,305.87
+7,Lithuania,303.0
+8,Denmark,295.62
+9,Albania,281.17
+10,Romania,266.19
+11,Luxembourg,265.9
+12,Kazakhstan,262.61
+13,Norway,261.52
+14,France,260.48
+15,Italy,256.1
+16,United States,253.8
+17,Germany,247.24
+18,Ireland,247.17
+19,Slovenia,246.44
+20,United Kingdom,241.47
+21,Estonia,238.86
+22,Belgium,238.47
+23,Austria,235.11
+24,Australia,230.92
+25,Iceland,223.68
+26,Portugal,222.94
+27,Croatia,217.52
+28,Argentina,213.1
+29,Canada,208.66
+30,Latvia,206.83
+31,Poland,198.51
+32,Bosnia and Herzegovina,196.68
+33,Dominica,195.98
+34,Czech Republic,195.47
+35,Malta,188.64
+36,Sudan,180.68
+37,Kyrgyzstan,179.28
+38,Israel,178.33
+39,Spain,177.49
+40,Costa Rica,176.29
+41,Hungary,175.59
+42,Ukraine,172.74
+43,Russia,172.46
+44,Uruguay,163.26
+45,Moldova,163.13
+46,Cyprus,159.11
+47,Pakistan,159.0
+48,Belarus,156.1
+49,Serbia,154.93
+50,Georgia,151.75
+51,Bulgaria,151.32
+52,Mongolia,145.31
+53,Uzbekistan,143.36
+54,Turkmenistan,140.33
+55,Macedonia,138.71
+56,Turkey,137.1
+57,Armenia,136.12
+58,Antigua and Barbuda,135.3
+59,Mauritania,135.0
+60,Bermuda,132.98
+61,New Caledonia,131.4
+62,Slovakia,130.1
+63,Brunei,129.11
+64,El Salvador,126.0
+65,Brazil,124.61
+66,Cape Verde,124.55
+67,Saint Lucia,122.97
+68,Colombia,122.57
+69,Azerbaijan,119.1
+70,Honduras,118.61
+71,Barbados,118.0
+72,Guyana,117.36
+73,Mexico,115.18
+74,Algeria,113.4
+75,Syria,112.18
+76,Mauritius,111.43
+77,United Arab Emirates,110.1
+78,Jamaica,108.42
+79,Trinidad and Tobago,107
+80,Lebanon,106.91
+81,Kuwait,106.67
+82,Tunisia,106.0
+—,French Polynesia,105
+83,New Zealand,103.79
+—,Netherlands Antilles,103.22
+84,Kenya,98.64
+85,Saudi Arabia,97.23
+86,Bahamas,93.18
+87,Chile,93.0
+88,Ecuador,91.5
+89,Botswana,88.89
+90,Jordan,88.1
+91,Venezuela,87.29
+92,Saint Kitts and Nevis,86.84
+93,Grenada,85.79
+94,Belize,85.12
+95,Nicaragua,84.23
+96,Seychelles,79.23
+97,Morocco,79.1
+98,Iran,66.12
+99,Maldives,50
+100,South Sudan,0
