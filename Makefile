@@ -9,7 +9,7 @@ develop:
 	python setup.py develop
 
 test:
-	pytest
+	pytest --nbval-lax
 
 clean:
 	rm -rf .pytest_cache

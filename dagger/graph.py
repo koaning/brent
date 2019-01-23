@@ -6,40 +6,10 @@ from graphviz import Digraph
 from dagger.common import normalise
 
 
-def _calc_prior_discrete(dataf, name):
-    return (dataf
-            .assign(n=1)
-            .groupby(name)
-            .count()['n']
-            .reset_index()
-            .assign(p=lambda d: d.n/d.n.sum())
-            .drop(columns=["n"])
-            .set_index(name)
-            .to_dict()["p"])
-
-
-def _group_probs(dataf, parents):
-    sum_per_group = dataf.groupby(parents).sum()['n'].reset_index()
-    return (dataf
-            .merge(sum_per_group, on=parents)
-            .assign(p=lambda d: d.n_x/d.n_y)
-            .drop(columns=["n_x", "n_y"]))
-
-
-def _calc_probs(dataf, groups):
-    return (dataf
-            .assign(n=1)
-            .groupby(groups)
-            .count()['n']
-            .reset_index()
-            .assign(p=lambda d: d.n / d.n.sum()))
-
-
 class DAG:
     def __init__(self, dataframe: pd.DataFrame):
         self._is_baked = False
         self._df = dataframe
-        self._priors = {n: _calc_prior_discrete(self._df, n) for n in self._df.columns}
         self.graph = nx.DiGraph()
         for node in self._df.columns:
             self.graph.add_node(node)
