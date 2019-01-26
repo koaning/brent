@@ -41,3 +41,16 @@ def test_connections2(simple_df1):
     assert set(dag.connections("a")) == {"b"}
     assert set(dag.connections("b")) == {"a", "c"}
     assert set(dag.connections("c")) == {"b"}
+
+
+def test_copy(simple_df1):
+    dag1 = DAG(simple_df1).add_edge("a", "b").add_edge("c", "b")
+    dag2 = DAG(simple_df1).add_edge("a", "b").add_edge("c", "b").add_edge("a", "c")
+    dag1_copy = dag1.copy()
+    dag2_copy = dag2.copy()
+    assert set(dag1_copy.edges) == set(dag1.edges)
+    assert set(dag2_copy.edges) == set(dag2.edges)
+    assert set(dag1_copy.nodes) == set(dag1.nodes)
+    assert set(dag2_copy.nodes) == set(dag2.nodes)
+    assert dag1._df.equals(dag1_copy._df)
+    assert dag2._df.equals(dag2_copy._df)

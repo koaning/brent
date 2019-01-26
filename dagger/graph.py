@@ -23,6 +23,19 @@ class DAG:
             marginal = self.merge_probs(marginal, self.calc_node_table(node))
         return marginal
 
+    @property
+    def nodes(self):
+        return list(self.graph.nodes)
+
+    @property
+    def edges(self):
+        return list(self.graph.edges)
+
+    def copy(self):
+        new_dag = DAG(self._df)
+        new_dag.graph = self.graph
+        return new_dag
+
     def leaf_nodes(self, graph: nx.DiGraph = None):
         if not graph:
             graph = self.graph
