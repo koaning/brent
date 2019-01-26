@@ -142,6 +142,8 @@ class DAG:
     def plot(self):
         """A pretty plotting function."""
         d = Digraph()
+        d.attr(rankdir='LR')
+        d.attr('node', shape='circle')
         for n in self.graph.nodes:
             d.node(n)
         for n1, n2 in self.graph.edges:
