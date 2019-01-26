@@ -1,4 +1,5 @@
 from dagger.graph import DAG
+from dagger.common import normalise
 
 from graphviz import Digraph
 
@@ -49,5 +50,19 @@ class Query:
                 d.edge(n1, n2)
         return d
 
-    def infer(self):
-        pass
+    def infer(self, give_table=False):
+        infer_dag = DAG(self.dag._df)
+        for n1, n2 in self.dag.edges:
+            if n2 not in self.do_dict.keys():
+                self.dag.add_edge(n1, n2)
+        marginal_table = infer_dag.marginal_table
+        for k, v in {**self.do_dict, **self.given_dict}.items():
+            marginal_table = marginal_table[marginal_table[k] == v]
+        tbl = marginal_table.assign(prob=lambda d: normalise(d.prob))
+        if give_table:
+            return tbl
+        output = {}
+        for c in tbl.columns:
+            if c != "prob":
+                output[c] = tbl.groupby(c)['prob'].sum().to_dict()
+        return output
