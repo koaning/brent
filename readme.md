@@ -12,6 +12,11 @@ Calculating the marginal probability is defined via;
 p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
 ```
 
+## inference plots 
+
+![](images/dag2.svg)
+
+
 ## planned usage 
 
 ```python
