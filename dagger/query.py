@@ -8,12 +8,35 @@ from graphviz import Digraph
 
 class Query:
     def __init__(self, dag: DAG, given=None, do=None, verbose=False):
+        """
+        A `dagger.Query` object describes a query that will be run
+        on a `dagger.DAG` object.
+
+        Inputs:
+
+        - **dag**: DAG object that contains all edges.
+        - **given**: Dictionary of key-value pairs of given items.
+        - **do**: Dictionary of key-value pairs of do operated items.
+
+        Example:
+
+        ```
+        from dagger import DAG, Query
+        from dagger.common import make_fake_df
+        # let's start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        # we can build a query dynamically
+        q1 = Query().given(a=1).do(d=1)
+        # alternatively we can build one from start
+        q2 = Query(given={'a':1}, do={'d':1})
+        ```
+        """
         self.dag = dag
         if not given:
             given = dict()
         if not do:
             do = dict()
-        self.verbose = verbose
         self.given_dict = given
         self.do_dict = do
 
@@ -43,6 +66,11 @@ class Query:
                 raise ValueError(f"{key} is already used in this query")
 
     def given(self, **kwargs):
+        """
+        Add items to the query that are `given`.
+        :param kwargs: key-value pairs of given items.
+        :return:
+        """
         self._check_query_input(**kwargs)
         return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, verbose=self.verbose)
 
