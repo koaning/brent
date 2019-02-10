@@ -1,4 +1,6 @@
 import logging
+
+import numpy as np
 import pandas as pd
 import networkx as nx
 from graphviz import Digraph
@@ -21,8 +23,8 @@ class DAG:
         nodes = list(self.graph.nodes)
         logging.debug(f"about to calculate marginal table with nodes {nodes}")
         logging.debug(f"updating table for node {nodes[-1]}")
-        logging.debug(f"current node table:\n{self.calc_node_table(nodes[-1])}")
         marginal = self.calc_node_table(nodes.pop())
+        logging.debug(f"current node table:\n{marginal}")
         logging.debug(f"current marginal table:\n{marginal}")
         for node in nodes:
             logging.debug(f"updating table for node {node}")
@@ -70,14 +72,25 @@ class DAG:
         :return: Pandas dataframe with associated probabilities.
         """
         parents = self.parents(name)
+        tbl = self._df.copy()
         logging.debug(f"creating node table node={name} parents={parents}")
-        return (self._df
-                .assign(count=1)
-                .groupby(list(parents) + [name])
-                .count()['count']
-                .reset_index()
-                .assign(prob=lambda d: d['count']/d['count'].sum())
-                .drop("count", axis=1))
+
+        def calculate_parents_size(dataf, groups=[]):
+            return (dataf
+                    .assign(count=1)
+                    .groupby(groups)
+                    .transform(np.sum)['count'])
+
+        if len(parents) == 0:
+            tbl = tbl.assign(parent_size=lambda d: d.shape[0])
+        else:
+            tbl = tbl.assign(parent_size=lambda d: calculate_parents_size(d, list(parents)))
+        return (tbl
+                .assign(node_size=lambda d: calculate_parents_size(d, list(parents) + [name]))
+                .assign(prob=lambda d: d['node_size'] / d['parent_size'])
+                [list(parents) + [name] + ["prob"]]
+                .drop_duplicates()
+                .reset_index(drop=True))
 
     def merge_probs(self, this_df, that_df):
         """

@@ -27,10 +27,8 @@ class Query:
         for n1, n2 in self.dag.edges:
             if n2 not in self.do_dict.keys():
                 infer_dag.add_edge(n1, n2)
-                logging.debug(f"edge {n1} -> {n2} added")
             else:
                 logging.debug(f"edge {n1} -> {n2} ignored because of do operator")
-        logging.debug(f"all edges in inference dag: {infer_dag.edges}")
         logging.debug(f"original DAG copied")
         return infer_dag
 
@@ -83,7 +81,6 @@ class Query:
         tbl = marginal_table.assign(prob=lambda d: normalise(d.prob))
         if give_table:
             return tbl
-        print(tbl)
         output = {}
         for c in tbl.columns:
             if c != "prob":
