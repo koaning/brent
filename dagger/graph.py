@@ -8,7 +8,37 @@ from dagger.common import normalise
 
 
 class DAG:
+    """
+    A `dagger.DAG` object describes a graphical model of a dataset. This
+    object is generated from a pandas dataframe. Every column in the
+    dataframe will result in a node/variable in the `dagger.DAG` object.
+
+    ```
+    from dagger import DAG
+    from dagger.common import make_fake_df
+    # let's start with a new dataset
+    df = make_fake_df(4)
+    dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+    ```
+    """
     def __init__(self, dataframe: pd.DataFrame):
+        """
+        Create a new `dagger.DAG` from a dataframe.
+
+        Inputs:
+
+        - **dataframe**: pandas object that contains all variables
+
+        Example:
+
+        ```
+        from dagger import DAG
+        from dagger.common import make_fake_df
+        # let's start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        ```
+        """
         self._df = dataframe
         self.graph = nx.DiGraph()
         for node in self._df.columns:
@@ -16,10 +46,14 @@ class DAG:
 
     @property
     def origin_nodes(self):
+        """These nodes are nodes that do not have any edges going in."""
         return tuple(x for x in self.graph.nodes() if self.graph.in_degree(x) == 0)
 
     @property
     def marginal_table(self):
+        """
+        The marginal table is a table with all possible values and associated probability.
+        """
         nodes = list(self.graph.nodes)
         logging.debug(f"about to calculate marginal table with nodes {nodes}")
         logging.debug(f"updating table for node {nodes[-1]}")
@@ -35,41 +69,30 @@ class DAG:
 
     @property
     def nodes(self):
+        """The nodes of the graph."""
         return list(self.graph.nodes)
 
     @property
     def edges(self):
+        """The edges of the graph."""
         return list(self.graph.edges)
 
     def copy(self):
+        """Returns a copy of the current DAG."""
         new_dag = DAG(self._df)
         new_dag.graph = self.graph
         return new_dag
-
-    def leaf_nodes(self, graph: nx.DiGraph = None):
-        if not graph:
-            graph = self.graph
-
-        def predicate(node):
-            type_a = (graph.in_degree(node) == 0) & (graph.out_degree(node) == 1)
-            type_b = (graph.in_degree(node) == 1) & (graph.out_degree(node) == 0)
-            return type_a | type_b
-
-        return [x for x in graph.nodes() if predicate(x)]
-
-    def no_parent_nodes(self, graph: nx.DiGraph = None):
-        if not graph:
-            graph = self.graph
-        return [x for x in graph.nodes() if graph.in_degree(x) == 0]
 
     def calc_node_table(self, name):
         """
         Calculates probability table for a given node.
 
-        Suppose we have graph A -> B -> C. Then `calc_node_table("b")`
-        call will calculate P(B | A) in the `probs` column of the result.
-        :param name: Name of a node in the graph
-        :return: Pandas dataframe with associated probabilities.
+        Suppose we have graph `A -> B -> C`: `.calc_node_table("b")`
+        call will calculate `P(B|A)` in the `probs` column of the result.
+
+        ## Input
+
+        - **name**: Name of a node/variable in the graph
         """
         parents = self.parents(name)
         tbl = self._df.copy()
@@ -94,11 +117,8 @@ class DAG:
 
     def merge_probs(self, this_df, that_df):
         """
-        Merges two probability dataframes while checking
-        if nodes are connected in the graph.
-        :param this_df: a probability dataframe
-        :param that_df: a probability dataframe
-        :return: a probability dataframe
+        Merges two probability dataframes while checking if nodes
+        are connected in the graph.
         """
         common_cols = list(set(this_df.columns)
                            .intersection(set(that_df.columns))
@@ -122,9 +142,23 @@ class DAG:
     def add_edge(self, source, sink):
         """
         Adds an edge to the graph.
-        :param source: Name of a node in the graph
-        :param sink: Name of a node in the graph
-        :return: updated DAG object
+
+        ## Input
+
+        - **source**: Name of a node in the graph
+        - **sink**: Name of a node in the graph
+
+        ## Example
+
+        ```
+        from dagger import DAG
+        from dagger.common import make_fake_df
+
+        (DAG(dataframe=make_fake_df(4))
+            .add_edge("a", "b")
+            .add_edge("b", "c")
+            .add_edge("c", "d"))
+        ```
         """
         if source not in self._df.columns:
             raise ValueError(f"cause {source} not in dataframe")
@@ -137,28 +171,82 @@ class DAG:
     def children(self, node):
         """
         Return the children of a node.
-        :param node: Name of a node
-        :return: set of nodenames
+
+        ## Input
+
+        - **node**: Name of a node
+
+        ## Example
+
+        ```
+        from dagger import DAG
+        from dagger.common import make_fake_df
+
+        dag = (DAG(dataframe=make_fake_df(4))
+            .add_edge("a", "b")
+            .add_edge("b", "c")
+            .add_edge("c", "d"))
+
+        dag.children("b") #outputs "c"
+        dag.children("c") #outputs "d"
+        ```
         """
         return set(self.graph.successors(node))
 
     def parents(self, node):
         """
         Return the parents of a node.
-        :param node: Name of a node
-        :return: set of nodenames
+
+        ## Input
+
+        - **node**: Name of a node
+
+        ## Example
+
+        ```
+        from dagger import DAG
+        from dagger.common import make_fake_df
+
+        dag = (DAG(dataframe=make_fake_df(4))
+            .add_edge("a", "b")
+            .add_edge("b", "c")
+            .add_edge("c", "d"))
+
+        dag.children("b") #outputs "a"
+        dag.children("c") #outputs "b"
+        ```
         """
         return set(self.graph.predecessors(node))
 
     def connections(self, node):
         """
-        Return all nodes connected to another.
-        :param node: Name of a node
-        :return: set of nodenames
+        Return all nodes connected to the one passed in.
+
+        ## Input
+
+        - **node**: Name of a node
+
+        ## Example
+
+        ```
+        from dagger import DAG
+        from dagger.common import make_fake_df
+
+        dag = (DAG(dataframe=make_fake_df(4))
+            .add_edge("a", "b")
+            .add_edge("b", "c")
+            .add_edge("c", "d"))
+
+        dag.children("b") #outputs ["a","c"]
+        dag.children("c") #outputs ["b","d"]
+        ```
         """
         return set(list(self.children(node)) + list(self.parents(node)))
 
     def independences(self):
+        """
+        **NOT IMPLEMENTED YET**
+        """
         # https://www.slideshare.net/duytungpham18/lecture-1-graphical-models
         pass
 
@@ -174,5 +262,9 @@ class DAG:
         return d
 
     def nx_plot(self, **kwargs):
-        """A customizable plotting function."""
+        """
+        A customizable plotting function. The function comes from `networkx`.
+        It merely wraps around the `nx.draw` method, documentation of this project
+        can be found [here](https://networkx.github.io/documentation/stable/index.html).
+        """
         nx.draw(self.graph, node_size=500, with_labels=True, node_color="white", **kwargs)
