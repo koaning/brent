@@ -27,6 +27,14 @@ def test_marginal_table(basic_dag):
     assert a.equals(b)
 
 
+def test_marginal_table_values(basic_dag):
+    tbl = basic_dag.marginal_table
+    dict_a = tbl.groupby("a").sum()["prob"].to_dict()
+    assert dict_a == {0: approx(0.5, abs=0.001), 1: approx(0.5, abs=0.001)}
+    dict_b = tbl.groupby("b").sum()["prob"].to_dict()
+    assert dict_b == {0: approx(0.375, abs=0.001), 1: approx(0.625, abs=0.001)}
+
+
 def test_calc_node_table(basic_dag):
     assert set(basic_dag.calc_node_table("a").columns) == {"a", "prob"}
     assert set(basic_dag.calc_node_table("b").columns) == {"a", "b", "c", "prob"}
@@ -51,3 +59,11 @@ def test_merge_probs_simple(basic_dag):
             .to_dict("list")["prob"])
     assert res2[0] == approx(.5, abs=0.01)
     assert res2[1] == approx(.5, abs=0.01)
+
+    res3 = (basic_dag.marginal_table
+            .groupby(['a'])['prob'].mean()
+            .reset_index()
+            .assign(prob=lambda d: normalise(d.prob))
+            .to_dict("list")["prob"])
+    assert res3[0] == approx(.5, abs=0.01)
+    assert res3[1] == approx(.5, abs=0.01)

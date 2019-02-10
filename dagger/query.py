@@ -1,4 +1,4 @@
-from numpy import round
+import logging
 
 from dagger.graph import DAG
 from dagger.common import normalise
@@ -7,17 +7,36 @@ from graphviz import Digraph
 
 
 class Query:
-    def __init__(self, dag: DAG, given=None, do=None):
+    def __init__(self, dag: DAG, given=None, do=None, verbose=False):
         self.dag = dag
         if not given:
             given = dict()
         if not do:
             do = dict()
+        self.verbose = verbose
         self.given_dict = given
         self.do_dict = do
 
+    def inference_dag(self):
+        """
+        This is a DAG created from the original but has been altered
+        to accomodate `do-calculus`.
+        """
+        infer_dag = DAG(self.dag._df.copy())
+        logging.debug(f"constructing copy of original DAG nodes: {infer_dag.nodes}")
+        for n1, n2 in self.dag.edges:
+            if n2 not in self.do_dict.keys():
+                infer_dag.add_edge(n1, n2)
+                logging.debug(f"edge {n1} -> {n2} added")
+            else:
+                logging.debug(f"edge {n1} -> {n2} ignored because of do operator")
+        logging.debug(f"all edges in inference dag: {infer_dag.edges}")
+        logging.debug(f"original DAG copied")
+        return infer_dag
+
     def _check_query_input(self, **kwargs):
         for key, value in kwargs.items():
+            logging.debug(f"checking key {key}={value}")
             if key not in self.dag.nodes:
                 raise ValueError(f"node {key} does not exist in original dag")
             if value not in self.dag._df[key].values:
@@ -27,11 +46,11 @@ class Query:
 
     def given(self, **kwargs):
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, verbose=self.verbose)
 
     def do(self, **kwargs):
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, verbose=self.verbose)
 
     def plot(self):
         """A pretty plotting function."""
@@ -53,16 +72,18 @@ class Query:
         return d
 
     def infer(self, give_table=False):
-        infer_dag = DAG(self.dag._df)
-        for n1, n2 in self.dag.edges:
-            if n2 not in self.do_dict.keys():
-                self.dag.add_edge(n1, n2)
+        logging.debug(f"about to make an inference")
+        infer_dag = self.inference_dag()
+        for node in infer_dag.nodes:
+            logging.debug(f"confirming parents({node}) = {infer_dag.parents(node)}")
         marginal_table = infer_dag.marginal_table
         for k, v in {**self.do_dict, **self.given_dict}.items():
-            marginal_table = marginal_table[marginal_table[k] == v]
+            logging.debug(f"processing {k}={v}")
+            marginal_table = marginal_table.loc[lambda d: d[k] == v]
         tbl = marginal_table.assign(prob=lambda d: normalise(d.prob))
         if give_table:
             return tbl
+        print(tbl)
         output = {}
         for c in tbl.columns:
             if c != "prob":

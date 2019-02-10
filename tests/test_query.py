@@ -60,13 +60,24 @@ def test_throwing_of_errors_4(dag):
         Query(dag).given(a=0).do(a=1)
 
 
-def test_expected_output_query1(simple_dag):
-    output = Query(simple_dag).given(a=0).infer()
-    assert output["b"][0] == pytest.approx(0.5, abs=0.001)
-    assert output["b"][1] == pytest.approx(0.5, abs=0.001)
+def test_inference_dag_copies_correct_parents_1(dag):
+    q = Query(dag)
+    for node in dag.nodes:
+        assert q.inference_dag().parents(node) == dag.parents(node)
 
 
-def test_expected_output_query2(simple_dag):
-    output = Query(simple_dag).given(a=1).infer()
-    assert output["b"][0] == pytest.approx(0.25, abs=0.001)
-    assert output["b"][1] == pytest.approx(0.75, abs=0.001)
+def test_inference_dag_copies_correct_parents_2(simple_dag):
+    q = Query(simple_dag)
+    for node in simple_dag.nodes:
+        assert q.inference_dag().parents(node) == simple_dag.parents(node)
+
+# def test_expected_output_query1(simple_dag):
+#     output = Query(simple_dag).given(a=0).infer()
+#     assert output["b"][0] == pytest.approx(0.5, abs=0.001)
+#     assert output["b"][1] == pytest.approx(0.5, abs=0.001)
+#
+#
+# def test_expected_output_query2(simple_dag):
+#     output = Query(simple_dag).given(a=1).infer()
+#     assert output["b"][0] == pytest.approx(0.25, abs=0.001)
+#     assert output["b"][1] == pytest.approx(0.75, abs=0.001)

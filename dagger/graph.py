@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import networkx as nx
 from graphviz import Digraph
@@ -18,9 +19,16 @@ class DAG:
     @property
     def marginal_table(self):
         nodes = list(self.graph.nodes)
+        logging.debug(f"about to calculate marginal table with nodes {nodes}")
+        logging.debug(f"updating table for node {nodes[-1]}")
+        logging.debug(f"current node table:\n{self.calc_node_table(nodes[-1])}")
         marginal = self.calc_node_table(nodes.pop())
+        logging.debug(f"current marginal table:\n{marginal}")
         for node in nodes:
+            logging.debug(f"updating table for node {node}")
+            logging.debug(f"current node table:\n{self.calc_node_table(node)}")
             marginal = self.merge_probs(marginal, self.calc_node_table(node))
+            logging.debug(f"current marginal table:\n{marginal}")
         return marginal
 
     @property
@@ -57,11 +65,12 @@ class DAG:
         Calculates probability table for a given node.
 
         Suppose we have graph A -> B -> C. Then `calc_node_table("b")`
-        call will calculate P(C | B).
+        call will calculate P(B | A).
         :param name: Name of a node in the graph
         :return: Pandas dataframe with associated probabilities.
         """
         parents = self.parents(name)
+        logging.debug(f"creating node table node={name} parents={parents}")
         return (self._df
                 .assign(count=1)
                 .groupby(list(parents) + [name])
@@ -109,6 +118,7 @@ class DAG:
         if sink not in self._df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
         self.graph.add_edge(source, sink)
+        logging.debug(f"created connection {source} -> {sink}")
         return self
 
     def children(self, node):
