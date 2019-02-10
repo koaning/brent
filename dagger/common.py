@@ -11,3 +11,7 @@ def make_fake_df(nodes=6):
 
 def normalise(x):
     return x / x.sum()
+
+
+def quantize_column(column, parts=4):
+    return pd.cut(column, parts, labels=range(1, parts+1))

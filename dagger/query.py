@@ -1,3 +1,5 @@
+from numpy import round
+
 from dagger.graph import DAG
 from dagger.common import normalise
 
