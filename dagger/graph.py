@@ -67,7 +67,7 @@ class DAG:
         Calculates probability table for a given node.
 
         Suppose we have graph A -> B -> C. Then `calc_node_table("b")`
-        call will calculate P(B | A).
+        call will calculate P(B | A) in the `probs` column of the result.
         :param name: Name of a node in the graph
         :return: Pandas dataframe with associated probabilities.
         """

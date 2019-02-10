@@ -8,7 +8,7 @@ def read(fname):
 
 base_packages = ["numpy>=1.15.4", "scipy>=1.2.0", "scikit-learn>=0.20.2",
                  "pandas>=0.23.4", "matplotlib>=3.0.2", "networkx>=2.2",
-                 "graphviz>=0.10.1", "pytest>=4.0.2", "nbval==0.9.1"]
+                 "graphviz>=0.10.1", "pytest>=4.0.2", "nbval==0.9.1", "plotnine==0.5.1"]
 
 setup(
     name="dagger",
