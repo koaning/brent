@@ -1,12 +1,8 @@
 import logging
-import numpy as np
 import pandas as pd
-import networkx as nx
-import matplotlib.pylab as plt
 
 from dagger.graph import DAG
 from dagger.query import Query
-from dagger.common import make_fake_df, normalise
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -21,4 +17,3 @@ logging.debug(f"parents of c: {dag.parents('c')}")
 for node in dag.nodes:
     logging.debug(f"confirming parents({node}) = {dag.parents(node)}")
 print(Query(dag).infer())
-# print(Query(dag).given(a=1).infer())

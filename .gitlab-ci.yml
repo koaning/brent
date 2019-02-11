@@ -8,7 +8,7 @@ test:
   script:
     - apt-get update
     - apt-get install -y graphviz
-    - pip3.6 install --upgrade pip flake8
+    - pip3.6 install -r requirements-dev.txt
     - pip3.6 install -e .
     - pytest --verbose --durations 0 --nbval-lax
     - flake8

@@ -15,6 +15,5 @@ setup(
     version="0.2.0",
     packages=find_packages(exclude=['data', 'notebooks']),
     long_description=read('readme.md'),
-    install_requires=base_packages,
-    extras_require={'dev': ["pytest>=4.0.2", "nbval==0.9.1", "plotnine==0.5.1"]}
+    install_requires=base_packages
 )
