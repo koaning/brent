@@ -49,3 +49,9 @@ Install `dagger` in the virtual environment via:
 ```bash
 $ pip install --editable .
 ```
+
+You can generate documentation locally by running: 
+
+```python
+$ pdoc --html --overwrite --template-dir doc/pdoc_template --http 0.0.0.0:12345 dagger
+```

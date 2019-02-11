@@ -7,7 +7,7 @@ from graphviz import Digraph
 
 
 class Query:
-    def __init__(self, dag: DAG, given=None, do=None, verbose=False):
+    def __init__(self, dag: DAG, given=None, do=None):
         """
         A `dagger.Query` object describes a query that will be run
         on a `dagger.DAG` object.
@@ -72,11 +72,11 @@ class Query:
         :return:
         """
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, verbose=self.verbose)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)
 
     def do(self, **kwargs):
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, verbose=self.verbose)
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
 
     def plot(self):
         """A pretty plotting function."""
