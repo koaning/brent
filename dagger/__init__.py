@@ -2,6 +2,8 @@
 Dagger
 ------
 
+![](https://gitlab.com/koaning/dagger/raw/master/images/dag1.png)
+
 Dagger is a playful tool to help understand bayesian graphical
 modelling as well as do-calculus. It offers support for discrete
 values and comes with great plotting tools. Under the hood is merely
@@ -22,7 +24,7 @@ dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
 dag.plot()
 ```
 
-![Imgur](https://i.imgur.com/akvCxeS.png)
+![](https://gitlab.com/koaning/dagger/raw/master/images/simple-graph.png)
 
 Such a graph is nice and we can get properties from it, these can be
 found in the documentation page. The main usecase for it though is
@@ -34,7 +36,7 @@ q = Query(dag).given(a=1).do(d=1)
 q.plot()
 ```
 
-![Imgur](https://i.imgur.com/c7aVjy4.png)
+![](https://gitlab.com/koaning/dagger/raw/master/images/simple-query.png)
 
 The nodes that are given have double circles around them while the
 nodes that are affected by a `do()`-operation have greyed out arcs
@@ -71,7 +73,7 @@ dag = (DAG(make_fake_df(7))
 dag.plot()
 ```
 
-![Imgur](https://i.imgur.com/VWNDqBM.png)
+![](https://gitlab.com/koaning/dagger/raw/master/images/complex-graph.png)
 
 This graph will be more involved when we create a query on it.
 
@@ -82,7 +84,7 @@ q.plot()
 
 But we can still make a pretty plot appear.
 
-![Imgur](https://i.imgur.com/jaYBchc.png)
+![](https://gitlab.com/koaning/dagger/raw/master/images/complex-query.png)
 
 Inference is still done in the same way. Note that you can
 get marginal probabilities in json format but you can also
