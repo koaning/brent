@@ -1,3 +1,9 @@
+"""
+The `dagger.query` module contains the `Query` object. This is the
+main object that you'll use to describe complex queries against
+casual graphs.
+"""
+
 import logging
 
 from dagger.graph import DAG

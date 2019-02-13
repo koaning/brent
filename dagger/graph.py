@@ -1,3 +1,8 @@
+"""
+The `dagger.graph` module contains the DAG object. This is the
+main object that you'll talk to when constructing a casual graph.
+"""
+
 import logging
 
 import numpy as np

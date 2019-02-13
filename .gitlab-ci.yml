@@ -12,3 +12,12 @@ test:
     - pip3.6 install -e .
     - pytest --verbose --durations 0 --nbval-lax
     - flake8
+
+documentation:
+  stage: unittest
+  script:
+    - apt-get update
+    - apt-get install -y graphviz
+    - pip3.6 install -r requirements-dev.txt
+    - pip3.6 install -e .
+    - pdoc --html --overwrite --template-dir doc/pdoc_template

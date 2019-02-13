@@ -1,3 +1,9 @@
+"""
+The `dagger.common` module contains common functions that can be
+used while working with dataframes and dagger graphs. They are also
+used internally by the library.
+"""
+
 import numpy as np
 import pandas as pd
 
