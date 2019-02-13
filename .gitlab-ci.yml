@@ -19,9 +19,9 @@ test:
 documentation:
   stage: documentation
   script:
-    - pdoc --html --overwrite --html-dir public --template-dir doc/pdoc_template dagger
-    artifacts:
-      paths:
-      - public
-    only:
-      - master
+  - pdoc --html --overwrite --html-dir public --template-dir doc/pdoc_template dagger
+  artifacts:
+    paths:
+    - public
+  only:
+    - master
