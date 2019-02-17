@@ -50,6 +50,14 @@ class DAG:
             self.graph.add_node(node)
 
     @property
+    def undirected(self):
+        """
+        Fetch the `undirected` variant of the NetworkX graph. This can be
+        useful when trying to determine all paths between two nodes.
+        """
+        return self.graph.to_undirected()
+
+    @property
     def origin_nodes(self):
         """These nodes are nodes that do not have any edges going in."""
         return tuple(x for x in self.graph.nodes() if self.graph.in_degree(x) == 0)
