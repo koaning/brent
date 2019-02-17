@@ -96,6 +96,14 @@ class DAG:
         new_dag.graph = self.graph
         return new_dag
 
+    def undirected_paths(self, node_a, node_b):
+        """
+        Returns a list of all the paths that are between `node_a` and `node_b`.
+        These paths do not take the direction into account and will turn the
+        directed graph into an undirected one.
+        """
+        return list(nx.all_simple_paths(self.undirected, node_a, node_b))
+
     def calc_node_table(self, name):
         """
         Calculates probability table for a given node.
