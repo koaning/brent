@@ -137,6 +137,7 @@ class DAG:
         for path in undirected_paths:
             z_path = [f"given({_})" if _ in z else _ for _ in path]
             logging.debug(f"now checking {' '.join(z_path)}")
+            yield z_path
 
     def calc_node_table(self, name):
         """
