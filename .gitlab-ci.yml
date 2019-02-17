@@ -16,8 +16,7 @@ test:
     - pytest --verbose --durations 0 --nbval-lax
     - flake8
 
-documentation:
-  stage: documentation
+pages:
   script:
   - pdoc --html --overwrite --html-dir public --template-dir doc-settings dagger
   - echo "helloworld" >> public/index.html
