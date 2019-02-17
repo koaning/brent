@@ -10,7 +10,7 @@ import pandas as pd
 import networkx as nx
 from graphviz import Digraph
 
-from dagger.common import normalise, window
+from dagger.common import normalise, window, is_path_blocked
 
 
 class DAG:
@@ -134,10 +134,13 @@ class DAG:
         are (conditionally if `z` is given) independant.
         """
         undirected_paths = self.directed_paths(node_a, node_b)
+        active_paths = []
         for path in undirected_paths:
             z_path = [f"given({_})" if _ in z else _ for _ in path]
             logging.debug(f"now checking {' '.join(z_path)}")
-            yield z_path
+            if not is_path_blocked(z_path):
+                active_paths.append(z_path)
+        return active_paths
 
     def calc_node_table(self, name):
         """

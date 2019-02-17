@@ -3,6 +3,7 @@ The `dagger.common` module contains common functions that can be
 used while working with dataframes and dagger graphs. They are also
 used internally by the library.
 """
+import logging
 from itertools import islice
 
 import numpy as np
@@ -96,3 +97,35 @@ def window(seq, n=2):
     for elem in it:
         result = result[1:] + (elem,)
         yield result
+
+
+def check_node_blocking(arrow_before, arrow_after, name):
+    given = "given" in name
+    if (arrow_before == '<-') and (arrow_after == '->'):
+        blocking = True if given else False
+        logging.debug(f"checking: ... {arrow_before} {name} {arrow_after} ... type: `split` blocking: {blocking}")
+    elif (arrow_before == '->') and (arrow_after == '<-'):
+        blocking = False if given else True
+        logging.debug(f"checking: ... {arrow_before} {name} {arrow_after} ... type: `collider` blocking: {blocking}")
+    elif arrow_before == arrow_after:
+        blocking =  True if given else False
+        logging.debug(f"checking: ... {arrow_before} {name} {arrow_after} ... type: `chain` blocking: {blocking}")
+    else:
+        raise ValueError(f"check arrow_before/arrow_after now:{arrow_before}, {arrow_after}")
+    return blocking
+
+
+def is_path_blocked(path_list):
+    for idx, name in enumerate(path_list):
+        if idx in [0, len(path_list) - 1]:
+            pass
+        elif name in ['<-', '->']:
+            pass
+        else:
+            arrow_before = path_list[idx - 1]
+            arrow_after = path_list[idx + 1]
+            blocking = check_node_blocking(arrow_before, arrow_after, name)
+            if blocking:
+                logging.info("found blocking node, can skip path")
+                return True
+    return False
