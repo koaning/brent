@@ -96,6 +96,13 @@ class DAG:
         new_dag.graph = self.graph
         return new_dag
 
+    def edge_direction(self, node_a, node_b):
+        if node_b in self.parents(node_a):
+            return "<-"
+        if node_a in self.parents(node_b):
+            return "->"
+        raise ValueError(f"node '{node_a}' is not connected to '{node_b}'")
+
     def undirected_paths(self, node_a, node_b):
         """
         Returns a list of all the paths that are between `node_a` and `node_b`.
@@ -103,6 +110,16 @@ class DAG:
         directed graph into an undirected one.
         """
         return list(nx.all_simple_paths(self.undirected, node_a, node_b))
+
+    def active_paths(self, node_a, node_b, z=list()):
+        """
+        Returns a list of all the paths that can influence probability between
+        `node_a` and `node_b`. You can also supply a collection of nodes `z` that
+        are given. These nodes might block (or enable) a path to be active. If there
+        are no active paths between two nodes then this means that the two nodes
+        are (conditionally if `z` is given) independant.
+        """
+        undirected_paths = self.undirected_paths(node_a, node_b)
 
     def calc_node_table(self, name):
         """
@@ -139,7 +156,19 @@ class DAG:
     def merge_probs(self, this_df, that_df):
         """
         Merges two probability dataframes while checking if nodes
-        are connected in the graph.
+        are connected in the graph. If `this_df` denotes `p(C|A,B)`
+        in table form and `that_df` denotes `p(B|A)` in table form
+        then the output of this function will denote `p(C,B|A)` in
+        table form. Note that this method is mainly meant for internal usage.
+
+        ## Input
+
+        - **this_df**: Name of a node/variable in the graph, say `p(C|A,B)`
+        - **that_df**: Name of a node/variable in the graph, say `p(B|A)`
+
+        ## Output
+
+        A dataframe that merges the two former tables, say `p(C,B|A)`.
         """
         common_cols = list(set(this_df.columns)
                            .intersection(set(that_df.columns))

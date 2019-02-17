@@ -3,6 +3,7 @@ The `dagger.common` module contains common functions that can be
 used while working with dataframes and dagger graphs. They are also
 used internally by the library.
 """
+from itertools import islice
 
 import numpy as np
 import pandas as pd
@@ -70,3 +71,28 @@ def quantize_column(column, parts=4):
     ```
     """
     return pd.cut(column, parts, labels=range(1, parts+1))
+
+
+def window(seq, n=2):
+    """
+    Calculates a moving window over an iterable.
+
+    ## Inputs
+    - **seq**: an iterable sequence
+    - **n**: the size of the window, typically this is equal to 2
+
+    ## Example
+
+    ```
+    from dagger.common import window
+
+    list(window([1,2,3,4), n=2))
+    ```
+    """
+    it = iter(seq)
+    result = tuple(islice(it, n))
+    if len(result) == n:
+        yield result
+    for elem in it:
+        result = result[1:] + (elem,)
+        yield result
