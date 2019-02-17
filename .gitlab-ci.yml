@@ -19,7 +19,8 @@ test:
 documentation:
   stage: documentation
   script:
-  - pdoc --html --overwrite --html-dir public --template-dir doc/pdoc_template dagger
+  - pdoc --html --overwrite --html-dir public --template-dir doc-settings dagger
+  - echo "helloworld" >> public/index.html
   artifacts:
     paths:
     - public
