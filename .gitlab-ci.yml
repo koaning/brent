@@ -1,9 +1,5 @@
 image: python:3.6
 
-stages:
-  - unittest
-  - documentation
-
 before_script:
 - apt-get update
 - apt-get install -y graphviz
@@ -11,7 +7,6 @@ before_script:
 - pip3.6 install -e .
 
 test:
-  stage: unittest
   script:
     - pytest --verbose --durations 0 --nbval-lax
     - flake8
