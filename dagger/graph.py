@@ -9,7 +9,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from graphviz import Digraph
-from dagger.common import normalise
+
+from dagger.common import normalise, window
 
 
 class DAG:
@@ -111,6 +112,19 @@ class DAG:
         """
         return list(nx.all_simple_paths(self.undirected, node_a, node_b))
 
+    def directed_paths(self, node_a, node_b):
+        output_paths = []
+        for path in self.undirected_paths(node_a, node_b):
+            windowed = list(window(path))
+            new_path = []
+            for n1, n2 in windowed:
+                new_path.append(n1)
+                new_path.append(self.edge_direction(n1, n2))
+            new_path.append(n2)
+            output_paths.append(new_path)
+            logging.debug(f"found directed path: {' '.join(new_path)}")
+        return output_paths
+
     def active_paths(self, node_a, node_b, z=list()):
         """
         Returns a list of all the paths that can influence probability between
@@ -119,7 +133,10 @@ class DAG:
         are no active paths between two nodes then this means that the two nodes
         are (conditionally if `z` is given) independant.
         """
-        undirected_paths = self.undirected_paths(node_a, node_b)
+        undirected_paths = self.directed_paths(node_a, node_b)
+        for path in undirected_paths:
+            z_path = [f"given({_})" if _ in z else _ for _ in path]
+            logging.debug(f"now checking {' '.join(z_path)}")
 
     def calc_node_table(self, name):
         """
