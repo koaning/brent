@@ -91,9 +91,12 @@ class Query:
         d = Digraph()
         d.attr(rankdir='LR')
         d.attr('node', shape='circle')
-        for n in self.dag.graph.nodes:
+        for idx, n in enumerate(self.dag.graph.nodes):
             if (n in givens) or (n in dos):
                 d.node(n, shape='doublecircle')
+            if n in dos:
+                d.node(" " * idx, shape="none")
+                d.edge(" " * idx, n)
             else:
                 d.node(n)
         for n1, n2 in self.dag.graph.edges:
