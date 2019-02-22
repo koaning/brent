@@ -98,6 +98,7 @@ class DAG:
         return new_dag
 
     def edge_direction(self, node_a, node_b):
+        """Determines the `<-` vs. `->` direction of an edge between two nodes."""
         if node_b in self.parents(node_a):
             return "<-"
         if node_a in self.parents(node_b):

@@ -13,7 +13,7 @@ from graphviz import Digraph
 
 
 class Query:
-    def __init__(self, dag: DAG, given=None, do=None):
+    def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
         """
         A `dagger.Query` object describes a query that will be run
         on a `dagger.DAG` object.
@@ -23,6 +23,7 @@ class Query:
         - **dag**: DAG object that contains all edges.
         - **given**: Dictionary of key-value pairs of given items.
         - **do**: Dictionary of key-value pairs of do operated items.
+        - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
 
         Example:
 
@@ -43,8 +44,11 @@ class Query:
             given = dict()
         if not do:
             do = dict()
+        if not counterfact:
+            counterfact = dict()
         self.given_dict = given
         self.do_dict = do
+        self.counterfact = counterfact
 
     def inference_dag(self):
         """
@@ -74,15 +78,35 @@ class Query:
     def given(self, **kwargs):
         """
         Add items to the query that are `given`.
-        :param kwargs: key-value pairs of given items.
-        :return:
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
         """
         self._check_query_input(**kwargs)
         return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)
 
     def do(self, **kwargs):
+        """
+        Add items to the query that are enforced via `do` operation.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of do items.
+        """
         self._check_query_input(**kwargs)
         return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
+
+    def counterfact(self, **kwargs):
+        """
+        Add items to the query that are observed but will be counterfacted.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of observations to be counterfacted.
+        """
+        self._check_query_input(**kwargs)
+        pass
 
     def plot(self):
         """A pretty plotting function."""
