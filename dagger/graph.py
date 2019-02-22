@@ -211,7 +211,7 @@ class DAG:
                 .drop("prob2", axis=1)
                 .reset_index())
 
-    def add_edge(self, source, sink):
+    def add_edge(self, source, sink) -> 'DAG':
         """
         Adds an edge to the graph.
 
@@ -236,6 +236,10 @@ class DAG:
             raise ValueError(f"cause {source} not in dataframe")
         if sink not in self._df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
+        new_graph = self.graph.copy()
+        new_graph.add_edge(source, sink)
+        if not nx.is_directed_acyclic_graph(new_graph):
+            raise ValueError(f"edge {source} -> {sink} causes DAG to get cycle")
         self.graph.add_edge(source, sink)
         logging.debug(f"created connection {source} -> {sink}")
         return self

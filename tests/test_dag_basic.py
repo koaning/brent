@@ -54,3 +54,9 @@ def test_copy(simple_df1):
     assert set(dag2_copy.nodes) == set(dag2.nodes)
     assert dag1._df.equals(dag1_copy._df)
     assert dag2._df.equals(dag2_copy._df)
+
+
+def test_dag_remains_dag(simple_df1):
+    dag = DAG(simple_df1).add_edge("a", "b").add_edge("b", "c")
+    with pytest.raises(ValueError):
+        assert dag.add_edge("c", "a")
