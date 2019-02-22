@@ -1,10 +1,10 @@
 """
-Dagger
-------
+Brent
+-----
 
-![](https://gitlab.com/koaning/brent/raw/master/images/dag1.png)
+![](https://github.com/koaning/brent/blob/master/images/dag1.png?raw=true)
 
-Dagger is a playful tool to help understand bayesian graphical
+Brent is a playful tool to help understand bayesian graphical
 modelling as well as do-calculus. It offers support for discrete
 values and comes with great plotting tools. Under the hood is merely
 uses [pandas](http://pandas.pydata.org/pandas-docs/stable/reference/index.html)
@@ -24,7 +24,7 @@ dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
 dag.plot()
 ```
 
-![](https://gitlab.com/koaning/brent/raw/master/images/simple-graph.png)
+![](https://github.com/koaning/brent/blob/master/images/simple-graph.png?raw=true)
 
 Such a graph is nice and we can get properties from it, these can be
 found in the documentation page. The main usecase for it though is
@@ -36,7 +36,7 @@ q = Query(dag).given(a=1).do(d=1)
 q.plot()
 ```
 
-![](https://gitlab.com/koaning/brent/raw/master/images/simple-query.png)
+![](https://github.com/koaning/brent/blob/master/images/simple-query.png?raw=true)
 
 The nodes that are given have double circles around them while the
 nodes that are affected by a `do()`-operation have greyed out arcs
@@ -73,7 +73,7 @@ dag = (DAG(make_fake_df(7))
 dag.plot()
 ```
 
-![](https://gitlab.com/koaning/brent/raw/master/images/complex-graph.png)
+![](https://github.com/koaning/brent/blob/master/images/complex-graph.png?raw=true)
 
 This graph will be more involved when we create a query on it.
 
@@ -84,7 +84,7 @@ q.plot()
 
 But we can still make a pretty plot appear.
 
-![](https://gitlab.com/koaning/brent/raw/master/images/complex-query.png)
+![](https://github.com/koaning/brent/blob/master/images/complex-query.png?raw=true)
 
 Inference is still done in the same way. Note that you can
 get marginal probabilities in json format but you can also

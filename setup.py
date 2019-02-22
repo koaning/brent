@@ -24,6 +24,6 @@ setup(
                  'Programming Language :: Python :: 3.6',
                  'Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: MIT License',
-                  'Topic :: Scientific/Engineering',
-                  'Topic :: Scientific/Engineering :: Artificial Intelligence']
+                 'Topic :: Scientific/Engineering',
+                 'Topic :: Scientific/Engineering :: Artificial Intelligence']
 )
