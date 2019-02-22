@@ -1,6 +1,0 @@
-pip>=19.0.2
-pytest>=4.0.2
-flake8>=3.7.5
-nbval>=0.9.1
-plotnine>=0.5.1
-pdoc3==0.5.2

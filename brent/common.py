@@ -108,7 +108,7 @@ def check_node_blocking(arrow_before, arrow_after, name):
         blocking = False if given else True
         logging.debug(f"checking: ... {arrow_before} {name} {arrow_after} ... type: `collider` blocking: {blocking}")
     elif arrow_before == arrow_after:
-        blocking =  True if given else False
+        blocking = True if given else False
         logging.debug(f"checking: ... {arrow_before} {name} {arrow_after} ... type: `chain` blocking: {blocking}")
     else:
         raise ValueError(f"check arrow_before/arrow_after now:{arrow_before}, {arrow_after}")

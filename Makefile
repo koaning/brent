@@ -1,5 +1,5 @@
 flake:
-	flake8 dagger
+	flake8 brent
 	flake8 tests
 
 install:
