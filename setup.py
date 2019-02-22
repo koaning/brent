@@ -17,7 +17,7 @@ setup(
     long_description=read('readme.md'),
     install_requires=base_packages,
     extras_require={
-        "dev": ["flake8==3.6.0", "pytest==3.3.1", "pdoc3==0.5.2"]
+        "dev": ["flake8==3.6.0", "pytest==3.3.1", "pdoc3==0.5.2", "nbval==0.9.1"]
     },
     classifiers=['Intended Audience :: Developers',
                  'Intended Audience :: Science/Research',
