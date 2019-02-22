@@ -45,9 +45,9 @@ class DAG:
         dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
         ```
         """
-        self._df = dataframe
+        self.df = dataframe
         self.graph = nx.DiGraph()
-        for node in self._df.columns:
+        for node in self.df.columns:
             self.graph.add_node(node)
 
     @property
@@ -93,7 +93,7 @@ class DAG:
 
     def copy(self):
         """Returns a copy of the current DAG."""
-        new_dag = DAG(self._df)
+        new_dag = DAG(self.df)
         new_dag.graph = self.graph
         return new_dag
 
@@ -155,7 +155,7 @@ class DAG:
         - **name**: Name of a node/variable in the graph
         """
         parents = self.parents(name)
-        tbl = self._df.copy()
+        tbl = self.df.copy()
         logging.debug(f"creating node table node={name} parents={parents}")
 
         def calculate_parents_size(dataf, groups=[]):
@@ -232,9 +232,9 @@ class DAG:
             .add_edge("c", "d"))
         ```
         """
-        if source not in self._df.columns:
+        if source not in self.df.columns:
             raise ValueError(f"cause {source} not in dataframe")
-        if sink not in self._df.columns:
+        if sink not in self.df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
         new_graph = self.graph.copy()
         new_graph.add_edge(source, sink)

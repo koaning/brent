@@ -55,7 +55,7 @@ class Query:
         This is a DAG created from the original but has been altered
         to accomodate `do-calculus`.
         """
-        infer_dag = DAG(self.dag._df.copy())
+        infer_dag = DAG(self.dag.df.copy())
         logging.debug(f"constructing copy of original DAG nodes: {infer_dag.nodes}")
         for n1, n2 in self.dag.edges:
             if n2 not in self.do_dict.keys():
@@ -70,7 +70,7 @@ class Query:
             logging.debug(f"checking key {key}={value}")
             if key not in self.dag.nodes:
                 raise ValueError(f"node {key} does not exist in original dag")
-            if value not in self.dag._df[key].values:
+            if value not in self.dag.df[key].values:
                 raise ValueError(f"value {value} does not occur for node {key}")
             if key in {**self.given_dict, **self.do_dict}.keys():
                 raise ValueError(f"{key} is already used in this query")
