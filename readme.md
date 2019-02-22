@@ -1,6 +1,8 @@
-# dagger
+# brent 
 
-## internals
+> They're good DAGs brent. 
+
+## What it is
 
 Suppose we have a graph like below. 
 
@@ -12,6 +14,8 @@ Calculating the marginal probability is defined via;
 p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
 ```
 
+Brent is a small, but fun, tool that makes it easy to explore causal graphical modelling and do-calculus. 
+
 ## inference plots 
 
 ![](images/dag2.svg)
@@ -20,7 +24,7 @@ p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
 ## planned usage 
 
 ```python
-from dagger import Graph, Query
+from brent import DAG, Query
 dag = Graph(data=df)
 
 dag.add_edge("smoking", "tar")
@@ -44,7 +48,7 @@ dag.add_edge("smoking", "cancer")
 
 ## installation 
 
-Install `dagger` in the virtual environment via:
+Install `brent` in the virtual environment via:
 
 ```bash
 $ pip install --editable .
