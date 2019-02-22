@@ -15,6 +15,8 @@ setup(
     version="0.2.1",
     packages=find_packages(exclude=['data', 'notebooks']),
     long_description=read('readme.md'),
+    keywords=['causal', 'bayesian', 'graphical', 'model', 'inference'],
+    python_requires='>=3.6',
     install_requires=base_packages,
     extras_require={
         "dev": ["flake8>=3.6.0", "pytest>=3.3.1", "pdoc3>=0.5.2", "nbval>=0.9.1", "plotnine>=0.5.1"]
