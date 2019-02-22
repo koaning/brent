@@ -1,5 +1,5 @@
 """
-The `dagger.graph` module contains the DAG object. This is the
+The `brent.graph` module contains the DAG object. This is the
 main object that you'll talk to when constructing a casual graph.
 """
 
@@ -10,18 +10,18 @@ import pandas as pd
 import networkx as nx
 from graphviz import Digraph
 
-from dagger.common import normalise, window, is_path_blocked
+from brent.common import normalise, window, is_path_blocked
 
 
 class DAG:
     """
-    A `dagger.DAG` object describes a graphical model of a dataset. This
+    A `brent.DAG` object describes a graphical model of a dataset. This
     object is generated from a pandas dataframe. Every column in the
-    dataframe will result in a node/variable in the `dagger.DAG` object.
+    dataframe will result in a node/variable in the `brent.DAG` object.
 
     ```
-    from dagger import DAG
-    from dagger.common import make_fake_df
+    from brent import DAG
+    from brent.common import make_fake_df
     # let's start with a new dataset
     df = make_fake_df(4)
     dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
@@ -29,7 +29,7 @@ class DAG:
     """
     def __init__(self, dataframe: pd.DataFrame):
         """
-        Create a new `dagger.DAG` from a dataframe.
+        Create a new `brent.DAG` from a dataframe.
 
         Inputs:
 
@@ -38,8 +38,8 @@ class DAG:
         Example:
 
         ```
-        from dagger import DAG
-        from dagger.common import make_fake_df
+        from brent import DAG
+        from brent.common import make_fake_df
         # let's start with a new dataset
         df = make_fake_df(4)
         dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
@@ -223,8 +223,8 @@ class DAG:
         ## Example
 
         ```
-        from dagger import DAG
-        from dagger.common import make_fake_df
+        from brent import DAG
+        from brent.common import make_fake_df
 
         (DAG(dataframe=make_fake_df(4))
             .add_edge("a", "b")
@@ -255,8 +255,8 @@ class DAG:
         ## Example
 
         ```
-        from dagger import DAG
-        from dagger.common import make_fake_df
+        from brent import DAG
+        from brent.common import make_fake_df
 
         dag = (DAG(dataframe=make_fake_df(4))
             .add_edge("a", "b")
@@ -280,8 +280,8 @@ class DAG:
         ## Example
 
         ```
-        from dagger import DAG
-        from dagger.common import make_fake_df
+        from brent import DAG
+        from brent.common import make_fake_df
 
         dag = (DAG(dataframe=make_fake_df(4))
             .add_edge("a", "b")
@@ -305,8 +305,8 @@ class DAG:
         ## Example
 
         ```
-        from dagger import DAG
-        from dagger.common import make_fake_df
+        from brent import DAG
+        from brent.common import make_fake_df
 
         dag = (DAG(dataframe=make_fake_df(4))
             .add_edge("a", "b")

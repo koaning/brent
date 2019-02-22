@@ -1,13 +1,13 @@
 """
-The `dagger.query` module contains the `Query` object. This is the
+The `brent.query` module contains the `Query` object. This is the
 main object that you'll use to describe complex queries against
 casual graphs.
 """
 
 import logging
 
-from dagger.graph import DAG
-from dagger.common import normalise
+from brent.graph import DAG
+from brent.common import normalise
 
 from graphviz import Digraph
 
@@ -15,8 +15,8 @@ from graphviz import Digraph
 class Query:
     def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
         """
-        A `dagger.Query` object describes a query that will be run
-        on a `dagger.DAG` object.
+        A `brent.Query` object describes a query that will be run
+        on a `brent.DAG` object.
 
         Inputs:
 
@@ -28,8 +28,8 @@ class Query:
         Example:
 
         ```
-        from dagger import DAG, Query
-        from dagger.common import make_fake_df
+        from brent import DAG, Query
+        from brent.common import make_fake_df
         # let's start with a new dataset
         df = make_fake_df(4)
         dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")

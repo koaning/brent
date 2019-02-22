@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from dagger.graph import DAG
+from brent.graph import DAG
 
 
 @pytest.fixture()

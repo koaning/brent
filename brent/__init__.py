@@ -2,7 +2,7 @@
 Dagger
 ------
 
-![](https://gitlab.com/koaning/dagger/raw/master/images/dag1.png)
+![](https://gitlab.com/koaning/brent/raw/master/images/dag1.png)
 
 Dagger is a playful tool to help understand bayesian graphical
 modelling as well as do-calculus. It offers support for discrete
@@ -15,8 +15,8 @@ and [networkx](https://networkx.github.io/documentation/stable/index.html).
 The basics of the tool can be demonstrated via the following codeblock.
 
 ```python
-from dagger import DAG, Query
-from dagger.common import make_fake_df
+from brent import DAG, Query
+from brent.common import make_fake_df
 
 # let's start with a new dataset and visualise it's graph
 df = make_fake_df(4)
@@ -24,7 +24,7 @@ dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
 dag.plot()
 ```
 
-![](https://gitlab.com/koaning/dagger/raw/master/images/simple-graph.png)
+![](https://gitlab.com/koaning/brent/raw/master/images/simple-graph.png)
 
 Such a graph is nice and we can get properties from it, these can be
 found in the documentation page. The main usecase for it though is
@@ -36,7 +36,7 @@ q = Query(dag).given(a=1).do(d=1)
 q.plot()
 ```
 
-![](https://gitlab.com/koaning/dagger/raw/master/images/simple-query.png)
+![](https://gitlab.com/koaning/brent/raw/master/images/simple-query.png)
 
 The nodes that are given have double circles around them while the
 nodes that are affected by a `do()`-operation have greyed out arcs
@@ -56,8 +56,8 @@ We'll still be using fake data for this example, but we're going to
 create a more complex graph.
 
 ```
-from dagger import DAG, Query
-from dagger.common import make_fake_df
+from brent import DAG, Query
+from brent.common import make_fake_df
 
 dag = (DAG(make_fake_df(7))
        .add_edge("e", "a")
@@ -73,7 +73,7 @@ dag = (DAG(make_fake_df(7))
 dag.plot()
 ```
 
-![](https://gitlab.com/koaning/dagger/raw/master/images/complex-graph.png)
+![](https://gitlab.com/koaning/brent/raw/master/images/complex-graph.png)
 
 This graph will be more involved when we create a query on it.
 
@@ -84,7 +84,7 @@ q.plot()
 
 But we can still make a pretty plot appear.
 
-![](https://gitlab.com/koaning/dagger/raw/master/images/complex-query.png)
+![](https://gitlab.com/koaning/brent/raw/master/images/complex-query.png)
 
 Inference is still done in the same way. Note that you can
 get marginal probabilities in json format but you can also

@@ -1,8 +1,8 @@
 import logging
 import pandas as pd
 
-from dagger.graph import DAG
-from dagger.query import Query
+from brent.graph import DAG
+from brent.query import Query
 
 logging.basicConfig(
     level=logging.DEBUG,

@@ -13,7 +13,7 @@ test:
 
 pages:
   script:
-  - pdoc --html --overwrite --html-dir public --template-dir doc-settings dagger
+  - pdoc --html --overwrite --html-dir public --template-dir doc-settings brent
   - echo "helloworld" >> public/index.html
   artifacts:
     paths:

@@ -1,4 +1,4 @@
-from dagger.common import window
+from brent.common import window
 
 
 def test_window():

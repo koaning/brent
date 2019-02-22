@@ -1,9 +1,9 @@
 import pytest
 import pandas as pd
 
-from dagger.graph import DAG
-from dagger.query import Query
-from dagger.common import make_fake_df
+from brent.graph import DAG
+from brent.query import Query
+from brent.common import make_fake_df
 
 
 @pytest.fixture

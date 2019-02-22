@@ -1,8 +1,8 @@
 from pytest import fixture, approx
 import pandas as pd
 
-from dagger.common import normalise
-from dagger.graph import DAG
+from brent.common import normalise
+from brent.graph import DAG
 
 
 @fixture

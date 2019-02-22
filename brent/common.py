@@ -1,6 +1,6 @@
 """
-The `dagger.common` module contains common functions that can be
-used while working with dataframes and dagger graphs. They are also
+The `brent.common` module contains common functions that can be
+used while working with dataframes and brent graphs. They are also
 used internally by the library.
 """
 import logging
@@ -24,7 +24,7 @@ def make_fake_df(nodes=6, rows=100, values=2, seed=42):
     ## Example
 
     ```
-    from dagger.common import make_fake_df
+    from brent.common import make_fake_df
     # let's start with a new dataset
     df = make_fake_df(nodes=4, rows=1000, values=4, seed=41)
     ```
@@ -47,7 +47,7 @@ def normalise(x):
 
     ```
     import numpy as np
-    from dagger.common import normalise
+    from brent.common import normalise
     normalise(np.array([1,2,3,4]))
     ```
     """
@@ -67,7 +67,7 @@ def quantize_column(column, parts=4):
 
     ```
     import numpy as np
-    from dagger.common import quantize_column
+    from brent.common import quantize_column
     quantize_column(np.array([1,2,3,4]), parts=2)
     ```
     """
@@ -85,7 +85,7 @@ def window(seq, n=2):
     ## Example
 
     ```
-    from dagger.common import window
+    from brent.common import window
 
     list(window([1,2,3,4), n=2))
     ```
