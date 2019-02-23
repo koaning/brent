@@ -11,5 +11,5 @@ install:
   - pip install .
   - pip install .[dev]
 script:
-  - pytest --nbval-lax
+  - pytest
   - flake8
