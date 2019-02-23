@@ -21,3 +21,6 @@ clean:
 	rm -rf .ipynb_checkpoints
 
 check: test flake
+
+docs:
+	pdoc --html --overwrite --template-dir doc-settings --http 0.0.0.0:12345 brent

@@ -6,10 +6,11 @@ casual graphs.
 
 import logging
 
+import numpy as np
+from graphviz import Digraph
+
 from brent.graph import DAG
 from brent.common import normalise
-
-from graphviz import Digraph
 
 
 class Query:
@@ -170,3 +171,35 @@ class Query:
             if c != "prob":
                 output[c] = tbl.groupby(c)['prob'].sum().to_dict()
         return output
+
+    def sample(self, n_samples=1):
+        """
+        Sample data from the current query.
+
+        ## Inputs
+
+        - **n_samples**: the number of samples to get
+
+        ## Output
+
+        `pandas.DataFrame` with new samples
+
+        ## Example
+
+        Example:
+
+        ```
+        from brent import DAG, Query
+        from brent.common import make_fake_df
+        # let's start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        # we can build a query dynamically
+        q1 = Query().given(a=1).do(d=1)
+        q1.sample(100)
+        ```
+        """
+        table = self.infer(give_table=True)
+        idx = np.random.choice(table.index, p=table.prob, replace=True, size=n_samples)
+        return table.loc[idx].reset_index(drop=True).drop(columns=['prob'])
+
