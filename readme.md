@@ -57,5 +57,5 @@ $ pip install --editable .
 You can generate documentation locally by running: 
 
 ```bash
-$ pdoc --html --overwrite --template-dir doc/pdoc_template --http 0.0.0.0:12345 dagger
+$ pdoc --html --overwrite --template-dir doc-settings --http 0.0.0.0:12345 brent
 ```

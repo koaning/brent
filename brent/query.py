@@ -84,7 +84,7 @@ class Query:
         - **kwargs**: key-value pairs of given items.
         """
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)
 
     def do(self, **kwargs):
         """
@@ -95,7 +95,7 @@ class Query:
         - **kwargs**: key-value pairs of do items.
         """
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)
 
     def counterfact(self, **kwargs):
         """
@@ -106,10 +106,13 @@ class Query:
         - **kwargs**: key-value pairs of observations to be counterfacted.
         """
         self._check_query_input(**kwargs)
-        pass
+        return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})
 
     def plot(self):
-        """A pretty plotting function."""
+        """
+        A pretty plotting function. Given nodes have double circles.
+        Nodes with `do` operations on them will have in-going arcs grayed.
+        """
         givens = self.given_dict.keys()
         dos = self.do_dict.keys()
         d = Digraph()
@@ -130,7 +133,27 @@ class Query:
                 d.edge(n1, n2)
         return d
 
+    def infer_counterfact(self):
+        """
+        If counterfact is in the query we will need to return.
+
+        The counterfacted variable is first assumed to be "given". We apply inference
+        on the entire graph as a first step. This gives us probabilities for all values.
+        This is the new graph definition.
+
+
+        """
+        pass
+
     def infer(self, give_table=False):
+        """
+        Run the inference on the graph given the current query.
+
+        ## Inputs
+
+        - **give_table**: Instead of calculating marginal probabilities and
+        returning a dictionary, return a pandas table instead. Defaults to `False`.
+        """
         logging.debug(f"about to make an inference")
         infer_dag = self.inference_dag()
         for node in infer_dag.nodes:
