@@ -4,7 +4,11 @@ In particulate it offers a classifier as well as an imputer.
 """
 
 from brent.graph import DAG
-from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
+from brent.query import Query
+
+import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator, ClassifierMixin
 
 
 class BrentClassifier(BaseEstimator, ClassifierMixin):
@@ -29,20 +33,21 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
             raise ValueError(f"column {to_predict} not found in DAG {dag}")
         self.dag = dag
         self.to_predict = to_predict
+        self.query = None
+        self.k = self.dag.df[to_predict].nunique()
 
-    def check_predict_name(self,):
-        pass
-
-    def fit(self, X, y):
-        pass
+    def fit(self, X: pd.DataFrame, y):
+        for node in self.dag.nodes:
+            if node not in X.columns:
+                raise ValueError(f"column {node} not in dataframe but in DAG")
+        return self
 
     def predict(self, X, y):
-        pass
+        return np.argmax(self.predict_proba(X, y), axis=1)
 
     def predict_proba(self, X, y):
-        pass
-
-
-class BrentImputer(BaseEstimator, TransformerMixin):
-    def __init__(self, dag: DAG):
-        self.dag = dag
+        predictions = np.zeros(y.shape)
+        for idx, row in X.iterrows():
+            query = Query(dag=self.dag, given=row.to_dict())
+            predictions[idx] = query.infer()[self.to_predict]
+        return predictions
