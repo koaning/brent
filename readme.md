@@ -1,5 +1,6 @@
 # brent 
 
+![](images/logo.png)
 > They're good DAGs brent. 
 
 ## What it is
@@ -8,18 +9,18 @@ Suppose we have a graph like below.
 
 ![](images/dag1.png)
 
-Calculating the marginal probability is defined via; 
-
 ```math
 p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
 ```
 
-Brent is a small, but fun, tool that makes it easy to explore causal graphical modelling and do-calculus. 
+Brent is a small, but fun, tool that makes it easy to explore causal graphical modelling and do-calculus
+on systems with discrete variables. 
 
 ## inference plots 
 
-![](images/dag2.svg)
+One of the main features is pretty pictures! 
 
+![](images/dag2.svg)
 
 ## planned usage 
 
