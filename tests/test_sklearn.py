@@ -7,18 +7,20 @@ from brent.common import make_fake_df
 
 @pytest.fixture
 def dag():
-    return (DAG(make_fake_df(7))
-            .add_edge("e", "a")
-            .add_edge("e", "d")
+    return (DAG(make_fake_df(4))
             .add_edge("a", "d")
             .add_edge("b", "d")
             .add_edge("a", "b")
-            .add_edge("a", "c")
-            .add_edge("b", "c")
-            .add_edge("c", "f")
-            .add_edge("g", "f"))
+            .add_edge("b", "c"))
 
 
 def test_bad_column_raises_error(dag):
     with pytest.raises(ValueError):
         clf = BrentClassifier(dag=dag, to_predict="q")
+
+
+def test_can_make_prediction(dag):
+    df = make_fake_df(4, rows=50)
+    mod = BrentClassifier(dag=dag, to_predict="c")
+    mod.fit(df, df['c']).predict(df[1:5])
+    mod.fit(df, df['c']).predict_proba(df[1:5])

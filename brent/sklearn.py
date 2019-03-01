@@ -33,6 +33,7 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
             raise ValueError(f"column {to_predict} not found in DAG {dag}")
         self.dag = dag
         self.to_predict = to_predict
+        self.to_use = [_ for _ in self.dag.df.columns if _ != self.to_predict]
         self.query = None
         self.k = self.dag.df[to_predict].nunique()
 
@@ -42,12 +43,15 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
                 raise ValueError(f"column {node} not in dataframe but in DAG")
         return self
 
-    def predict(self, X, y):
-        return np.argmax(self.predict_proba(X, y), axis=1)
+    def predict(self, X):
+        return np.argmax(self.predict_proba(X), axis=1)
 
-    def predict_proba(self, X, y):
-        predictions = np.zeros(y.shape)
-        for idx, row in X.iterrows():
+    def predict_proba(self, X):
+        predictions = np.zeros((X.shape[0], self.k))
+        for idx, row in X[self.to_use].reset_index(drop=True).iterrows():
             query = Query(dag=self.dag, given=row.to_dict())
-            predictions[idx] = query.infer()[self.to_predict]
+            table = query.infer(give_table=True).sort_values(self.to_predict)[[self.to_predict, 'prob']]
+            for i, r in table.iterrows():
+                k = r[self.to_predict]
+                predictions[idx, int(k)] = r['prob']
         return predictions
