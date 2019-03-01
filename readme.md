@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.com/koaning/brent.svg?branch=master)](https://travis-ci.com/koaning/brent)
+
+[![Build status](https://ci.appveyor.com/api/projects/status/aancx73nveo29esu?svg=true)](https://ci.appveyor.com/project/koaning/brent)
+
+
 ![](images/logo.png)
 > They're good DAGs brent. 
 
