@@ -1,22 +1,17 @@
-# brent 
-
 ![](images/logo.png)
 > They're good DAGs brent. 
 
 ## What it is
 
-Suppose we have a graph like below. 
+Brent is a small, but fun, python library that makes it easy to explore causal graphical modelling and do-calculus
+on systems with discrete variables. Brent is a tool that can help out when you can write a system like below, but 
+want to write complex queries on it.  
 
-![](images/dag1.png)
+![](images/dag1.png) 
 
-```math
-p(A, B, C, D, E, F, G) = p(A|E) p(B|A) p(C|A,B) p(D|A,B,E) p(E) p(F|C,G) p(G)
-```
+## Documentation
 
-Brent is a small, but fun, tool that makes it easy to explore causal graphical modelling and do-calculus
-on systems with discrete variables. 
-
-## inference plots 
+## Plotting 
 
 One of the main features is pretty pictures! 
 
@@ -31,20 +26,6 @@ dag = Graph(data=df)
 dag.add_edge("smoking", "tar")
 dag.add_edge("tar", "cancer")
 dag.add_edge("smoking", "cancer")
-```
-
-## project structure 
-
-```
-│
-├── data/               <- The original, immutable data dump. 
-├── notebooks/          <- Jupyter notebooks. Naming convention is a short `-` delimited 
-│                          description, a number (for ordering), and the creator's initials,
-│                          e.g. `initial-data-exploration-01-hg`.
-├── tests/              <- Unit tests.
-├── dagger/             <- Python module with source code of this project.
-├── Makefile            <- Makefile with commands like `make environment`
-└── README.md           <- The top-level README for developers using this project.
 ```
 
 ## installation 
