@@ -190,7 +190,7 @@ def is_path_blocked(path_list):
     from brent.common import is_path_blocked
 
     check_node_blocking([&#34;a&#34;, &#34;-&gt;&#34;, &#34;b&#34;, &#34;-&gt;&#34;, &#34;c&#34;) # False
-    check_node_blocking([&#34;a&#34;, &#34;-&gt;&#34;, &#34;given_b&#34;, &#34;-&gt;&#34;, &#34;c&#34;) # False
+    check_node_blocking([&#34;a&#34;, &#34;-&gt;&#34;, &#34;given_b&#34;, &#34;-&gt;&#34;, &#34;c&#34;) # True
     ```
     &#34;&#34;&#34;
     for idx, name in enumerate(path_list):
@@ -295,7 +295,7 @@ to indicate that it is given) which are alternated by arrows
 <pre><code>from brent.common import is_path_blocked
 
 check_node_blocking([&quot;a&quot;, &quot;-&gt;&quot;, &quot;b&quot;, &quot;-&gt;&quot;, &quot;c&quot;) # False
-check_node_blocking([&quot;a&quot;, &quot;-&gt;&quot;, &quot;given_b&quot;, &quot;-&gt;&quot;, &quot;c&quot;) # False
+check_node_blocking([&quot;a&quot;, &quot;-&gt;&quot;, &quot;given_b&quot;, &quot;-&gt;&quot;, &quot;c&quot;) # True
 </code></pre></section>
 <details class="source">
 <summary>Source code</summary>
@@ -320,7 +320,7 @@ check_node_blocking([&quot;a&quot;, &quot;-&gt;&quot;, &quot;given_b&quot;, &quo
     from brent.common import is_path_blocked
 
     check_node_blocking([&#34;a&#34;, &#34;-&gt;&#34;, &#34;b&#34;, &#34;-&gt;&#34;, &#34;c&#34;) # False
-    check_node_blocking([&#34;a&#34;, &#34;-&gt;&#34;, &#34;given_b&#34;, &#34;-&gt;&#34;, &#34;c&#34;) # False
+    check_node_blocking([&#34;a&#34;, &#34;-&gt;&#34;, &#34;given_b&#34;, &#34;-&gt;&#34;, &#34;c&#34;) # True
     ```
     &#34;&#34;&#34;
     for idx, name in enumerate(path_list):

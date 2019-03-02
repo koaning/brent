@@ -160,7 +160,7 @@ def is_path_blocked(path_list):
     from brent.common import is_path_blocked
 
     check_node_blocking(["a", "->", "b", "->", "c") # False
-    check_node_blocking(["a", "->", "given_b", "->", "c") # False
+    check_node_blocking(["a", "->", "given_b", "->", "c") # True
     ```
     """
     for idx, name in enumerate(path_list):
