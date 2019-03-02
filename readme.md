@@ -75,7 +75,7 @@ Liked the quickstart? The documentation (which is generated with [pdoc3](https:/
 3. more unit tests
 4. datasets to start/teach with 
 5. clear logging 
-
+6. estimator/transformers for scikit-learn 
 
 ## Developing Locally 
 
