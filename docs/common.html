@@ -81,6 +81,8 @@ def normalise(x):
     normalise(np.array([1,2,3,4]))
     ```
     &#34;&#34;&#34;
+    if isinstance(x, list):
+        x = np.array(x)
     return x / x.sum()
 
 
@@ -179,6 +181,7 @@ def is_path_blocked(path_list):
                      (&#34;-&gt;&#34; or &#34;&lt;-&#34;) indicating the direction of the arcs on the path
 
     ## Output
+
     Return `True`/`False`.
 
     ## Example
@@ -308,6 +311,7 @@ check_node_blocking([&quot;a&quot;, &quot;-&gt;&quot;, &quot;given_b&quot;, &quo
                      (&#34;-&gt;&#34; or &#34;&lt;-&#34;) indicating the direction of the arcs on the path
 
     ## Output
+
     Return `True`/`False`.
 
     ## Example
@@ -410,6 +414,8 @@ normalise(np.array([1,2,3,4]))
     normalise(np.array([1,2,3,4]))
     ```
     &#34;&#34;&#34;
+    if isinstance(x, list):
+        x = np.array(x)
     return x / x.sum()</code></pre>
 </details>
 </dd>
