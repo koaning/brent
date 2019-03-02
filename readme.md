@@ -4,15 +4,6 @@
 ![](images/logo.png)
 > They're good DAGs brent. 
 
-## Alpha Notice 
-
-*NOTE!* this project is in preview stages. I think I have something fun here and I've written unit tests on what I'm doing but parts are still going under review. Also there are parts of the library currently missing but which are on a roadmap: 
-
-1. conditional indepdence tests 
-2. api for counterfactual queries 
-3. more unit tests
-4. datasets to start/teach with 
-
 ## What it is
 
 Brent is a small, but fun, python library that makes it easy to explore causal graphical modelling and do-calculus
@@ -20,10 +11,6 @@ on systems with discrete variables. Brent is a tool that can help out when you c
 want to write complex queries on it.  
 
 ![](images/dag1.png) 
-
-## Documentation
-
-The documentation (which is generated with [pdoc3](https://github.com/pdoc3/pdoc)) can be found [here](https://koaning.github.io/brent/).
 
 ## Quickstart 
 
@@ -68,6 +55,20 @@ too.
 q.infer()
 q.infer(give_table=True)
 ```
+
+## Documentation
+
+Liked the quickstart? The documentation (which is generated with [pdoc3](https://github.com/pdoc3/pdoc)) can be found [here](https://koaning.github.io/brent/).
+
+## Alpha Notice 
+
+**NOTE!** this project is in **preview** stages. I think I have something fun here and I've written unit tests on what I'm doing but parts are still going under review. Also there are parts of the library currently missing but which are on a roadmap: 
+
+1. conditional indepdence tests 
+2. api for counterfactual queries 
+3. more unit tests
+4. datasets to start/teach with 
+
 
 ## Developing Locally 
 
