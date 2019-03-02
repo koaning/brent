@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.2" />
+<title>brent.query API documentation</title>
+<meta name="description" content="The `brent.query` module contains the `Query` object. This is the
+main object that you&#39;ll use to describe complex queries against
+casual graphs." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}#index .two-column{column-count:2}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<link rel="icon" href="https://pdoc.github.io/pdoc/logo.png">
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>brent.query</code> module</h1>
+</header>
+<section id="section-intro">
+<p>The <a title="brent.query" href="#brent.query"><code>brent.query</code></a> module contains the <a title="brent.query.Query" href="#brent.query.Query"><code>Query</code></a> object. This is the
+main object that you'll use to describe complex queries against
+casual graphs.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">&#34;&#34;&#34;
+The `brent.query` module contains the `Query` object. This is the
+main object that you&#39;ll use to describe complex queries against
+casual graphs.
+&#34;&#34;&#34;
+
+import logging
+
+import numpy as np
+from graphviz import Digraph
+
+from brent.graph import DAG
+from brent.common import normalise
+
+
+class Query:
+    def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
+        &#34;&#34;&#34;
+        A `brent.Query` object describes a query that will be run
+        on a `brent.DAG` object.
+
+        Inputs:
+
+        - **dag**: DAG object that contains all edges.
+        - **given**: Dictionary of key-value pairs of given items.
+        - **do**: Dictionary of key-value pairs of do operated items.
+        - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
+
+        Example:
+
+        ```
+        from brent import DAG, Query
+        from brent.common import make_fake_df
+        # let&#39;s start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge(&#34;a&#34;, &#34;b&#34;).add_edge(&#34;b&#34;, &#34;c&#34;).add_edge(&#34;c&#34;,&#34;d&#34;)
+        # we can build a query dynamically
+        q1 = Query().given(a=1).do(d=1)
+        # alternatively we can build one from start
+        q2 = Query(given={&#39;a&#39;:1}, do={&#39;d&#39;:1})
+        ```
+        &#34;&#34;&#34;
+        self.dag = dag
+        if not given:
+            given = dict()
+        if not do:
+            do = dict()
+        if not counterfact:
+            counterfact = dict()
+        self.given_dict = given
+        self.do_dict = do
+        self.counterfact = counterfact
+
+    def inference_dag(self):
+        &#34;&#34;&#34;
+        This is a DAG created from the original but has been altered
+        to accomodate `do-calculus`.
+        &#34;&#34;&#34;
+        infer_dag = DAG(self.dag.df.copy())
+        logging.debug(f&#34;constructing copy of original DAG nodes: {infer_dag.nodes}&#34;)
+        for n1, n2 in self.dag.edges:
+            if n2 not in self.do_dict.keys():
+                infer_dag.add_edge(n1, n2)
+            else:
+                logging.debug(f&#34;edge {n1} -&gt; {n2} ignored because of do operator&#34;)
+        logging.debug(f&#34;original DAG copied&#34;)
+        return infer_dag
+
+    def _check_query_input(self, **kwargs):
+        for key, value in kwargs.items():
+            logging.debug(f&#34;checking key {key}={value}&#34;)
+            if key not in self.dag.nodes:
+                raise ValueError(f&#34;node {key} does not exist in original dag&#34;)
+            if value not in self.dag.df[key].values:
+                raise ValueError(f&#34;value {value} does not occur for node {key}&#34;)
+            if key in {**self.given_dict, **self.do_dict}.keys():
+                raise ValueError(f&#34;{key} is already used in this query&#34;)
+
+    def given(self, **kwargs):
+        &#34;&#34;&#34;
+        Add items to the query that are `given`.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)
+
+    def do(self, **kwargs):
+        &#34;&#34;&#34;
+        Add items to the query that are enforced via `do` operation.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of do items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)
+
+    def counterfact(self, **kwargs):
+        &#34;&#34;&#34;
+        Add items to the query that are observed but will be counterfacted.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of observations to be counterfacted.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})
+
+    def plot(self):
+        &#34;&#34;&#34;
+        A pretty plotting function. Given nodes have double circles.
+        Nodes with `do` operations on them will have in-going arcs grayed.
+        &#34;&#34;&#34;
+        givens = self.given_dict.keys()
+        dos = self.do_dict.keys()
+        d = Digraph()
+        d.attr(rankdir=&#39;LR&#39;)
+        d.attr(&#39;node&#39;, shape=&#39;circle&#39;)
+        for idx, n in enumerate(self.dag.graph.nodes):
+            if (n in givens) or (n in dos):
+                d.node(n, shape=&#39;doublecircle&#39;)
+            if n in dos:
+                d.node(&#34; &#34; * idx, shape=&#34;none&#34;)
+                d.edge(&#34; &#34; * idx, n)
+            else:
+                d.node(n)
+        for n1, n2 in self.dag.graph.edges:
+            if n2 in dos:
+                d.edge(n1, n2, color=&#34;lightgray&#34;, style=&#34;dashed&#34;)
+            else:
+                d.edge(n1, n2)
+        return d
+
+    def infer_counterfact(self):
+        &#34;&#34;&#34;
+        If counterfact is in the query we will need to return.
+
+        The counterfacted variable is first assumed to be &#34;given&#34;. We apply inference
+        on the entire graph as a first step. This gives us probabilities for all values.
+        This is the new graph definition.
+
+
+        &#34;&#34;&#34;
+        pass
+
+    def infer(self, give_table=False):
+        &#34;&#34;&#34;
+        Run the inference on the graph given the current query.
+
+        ## Inputs
+
+        - **give_table**: Instead of calculating marginal probabilities and
+        returning a dictionary, return a pandas table instead. Defaults to `False`.
+        &#34;&#34;&#34;
+        logging.debug(f&#34;about to make an inference&#34;)
+        infer_dag = self.inference_dag()
+        for node in infer_dag.nodes:
+            logging.debug(f&#34;confirming parents({node}) = {infer_dag.parents(node)}&#34;)
+        marginal_table = infer_dag.marginal_table
+        for k, v in {**self.do_dict, **self.given_dict}.items():
+            logging.debug(f&#34;processing {k}={v}&#34;)
+            marginal_table = marginal_table.loc[lambda d: d[k] == v]
+        tbl = marginal_table.assign(prob=lambda d: normalise(d.prob))
+        if give_table:
+            return tbl
+        output = {}
+        for c in tbl.columns:
+            if c != &#34;prob&#34;:
+                output[c] = tbl.groupby(c)[&#39;prob&#39;].sum().to_dict()
+        return output
+
+    def sample(self, n_samples=1):
+        &#34;&#34;&#34;
+        Sample data from the current query.
+
+        ## Inputs
+
+        - **n_samples**: the number of samples to get
+
+        ## Output
+
+        `pandas.DataFrame` with new samples
+
+        ## Example
+
+        Example:
+
+        ```
+        from brent import DAG, Query
+        from brent.common import make_fake_df
+        # let&#39;s start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge(&#34;a&#34;, &#34;b&#34;).add_edge(&#34;b&#34;, &#34;c&#34;).add_edge(&#34;c&#34;,&#34;d&#34;)
+        # we can build a query dynamically
+        q1 = Query().given(a=1).do(d=1)
+        q1.sample(100)
+        ```
+        &#34;&#34;&#34;
+        table = self.infer(give_table=True)
+        idx = np.random.choice(table.index, p=table.prob, replace=True, size=n_samples)
+        return table.loc[idx].reset_index(drop=True).drop(columns=[&#39;prob&#39;])</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="brent.query.Query"><code class="flex name class">
+<span>class <span class="ident">Query</span></span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Query:
+    def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
+        &#34;&#34;&#34;
+        A `brent.Query` object describes a query that will be run
+        on a `brent.DAG` object.
+
+        Inputs:
+
+        - **dag**: DAG object that contains all edges.
+        - **given**: Dictionary of key-value pairs of given items.
+        - **do**: Dictionary of key-value pairs of do operated items.
+        - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
+
+        Example:
+
+        ```
+        from brent import DAG, Query
+        from brent.common import make_fake_df
+        # let&#39;s start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge(&#34;a&#34;, &#34;b&#34;).add_edge(&#34;b&#34;, &#34;c&#34;).add_edge(&#34;c&#34;,&#34;d&#34;)
+        # we can build a query dynamically
+        q1 = Query().given(a=1).do(d=1)
+        # alternatively we can build one from start
+        q2 = Query(given={&#39;a&#39;:1}, do={&#39;d&#39;:1})
+        ```
+        &#34;&#34;&#34;
+        self.dag = dag
+        if not given:
+            given = dict()
+        if not do:
+            do = dict()
+        if not counterfact:
+            counterfact = dict()
+        self.given_dict = given
+        self.do_dict = do
+        self.counterfact = counterfact
+
+    def inference_dag(self):
+        &#34;&#34;&#34;
+        This is a DAG created from the original but has been altered
+        to accomodate `do-calculus`.
+        &#34;&#34;&#34;
+        infer_dag = DAG(self.dag.df.copy())
+        logging.debug(f&#34;constructing copy of original DAG nodes: {infer_dag.nodes}&#34;)
+        for n1, n2 in self.dag.edges:
+            if n2 not in self.do_dict.keys():
+                infer_dag.add_edge(n1, n2)
+            else:
+                logging.debug(f&#34;edge {n1} -&gt; {n2} ignored because of do operator&#34;)
+        logging.debug(f&#34;original DAG copied&#34;)
+        return infer_dag
+
+    def _check_query_input(self, **kwargs):
+        for key, value in kwargs.items():
+            logging.debug(f&#34;checking key {key}={value}&#34;)
+            if key not in self.dag.nodes:
+                raise ValueError(f&#34;node {key} does not exist in original dag&#34;)
+            if value not in self.dag.df[key].values:
+                raise ValueError(f&#34;value {value} does not occur for node {key}&#34;)
+            if key in {**self.given_dict, **self.do_dict}.keys():
+                raise ValueError(f&#34;{key} is already used in this query&#34;)
+
+    def given(self, **kwargs):
+        &#34;&#34;&#34;
+        Add items to the query that are `given`.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)
+
+    def do(self, **kwargs):
+        &#34;&#34;&#34;
+        Add items to the query that are enforced via `do` operation.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of do items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)
+
+    def counterfact(self, **kwargs):
+        &#34;&#34;&#34;
+        Add items to the query that are observed but will be counterfacted.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of observations to be counterfacted.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})
+
+    def plot(self):
+        &#34;&#34;&#34;
+        A pretty plotting function. Given nodes have double circles.
+        Nodes with `do` operations on them will have in-going arcs grayed.
+        &#34;&#34;&#34;
+        givens = self.given_dict.keys()
+        dos = self.do_dict.keys()
+        d = Digraph()
+        d.attr(rankdir=&#39;LR&#39;)
+        d.attr(&#39;node&#39;, shape=&#39;circle&#39;)
+        for idx, n in enumerate(self.dag.graph.nodes):
+            if (n in givens) or (n in dos):
+                d.node(n, shape=&#39;doublecircle&#39;)
+            if n in dos:
+                d.node(&#34; &#34; * idx, shape=&#34;none&#34;)
+                d.edge(&#34; &#34; * idx, n)
+            else:
+                d.node(n)
+        for n1, n2 in self.dag.graph.edges:
+            if n2 in dos:
+                d.edge(n1, n2, color=&#34;lightgray&#34;, style=&#34;dashed&#34;)
+            else:
+                d.edge(n1, n2)
+        return d
+
+    def infer_counterfact(self):
+        &#34;&#34;&#34;
+        If counterfact is in the query we will need to return.
+
+        The counterfacted variable is first assumed to be &#34;given&#34;. We apply inference
+        on the entire graph as a first step. This gives us probabilities for all values.
+        This is the new graph definition.
+
+
+        &#34;&#34;&#34;
+        pass
+
+    def infer(self, give_table=False):
+        &#34;&#34;&#34;
+        Run the inference on the graph given the current query.
+
+        ## Inputs
+
+        - **give_table**: Instead of calculating marginal probabilities and
+        returning a dictionary, return a pandas table instead. Defaults to `False`.
+        &#34;&#34;&#34;
+        logging.debug(f&#34;about to make an inference&#34;)
+        infer_dag = self.inference_dag()
+        for node in infer_dag.nodes:
+            logging.debug(f&#34;confirming parents({node}) = {infer_dag.parents(node)}&#34;)
+        marginal_table = infer_dag.marginal_table
+        for k, v in {**self.do_dict, **self.given_dict}.items():
+            logging.debug(f&#34;processing {k}={v}&#34;)
+            marginal_table = marginal_table.loc[lambda d: d[k] == v]
+        tbl = marginal_table.assign(prob=lambda d: normalise(d.prob))
+        if give_table:
+            return tbl
+        output = {}
+        for c in tbl.columns:
+            if c != &#34;prob&#34;:
+                output[c] = tbl.groupby(c)[&#39;prob&#39;].sum().to_dict()
+        return output
+
+    def sample(self, n_samples=1):
+        &#34;&#34;&#34;
+        Sample data from the current query.
+
+        ## Inputs
+
+        - **n_samples**: the number of samples to get
+
+        ## Output
+
+        `pandas.DataFrame` with new samples
+
+        ## Example
+
+        Example:
+
+        ```
+        from brent import DAG, Query
+        from brent.common import make_fake_df
+        # let&#39;s start with a new dataset
+        df = make_fake_df(4)
+        dag = DAG(df).add_edge(&#34;a&#34;, &#34;b&#34;).add_edge(&#34;b&#34;, &#34;c&#34;).add_edge(&#34;c&#34;,&#34;d&#34;)
+        # we can build a query dynamically
+        q1 = Query().given(a=1).do(d=1)
+        q1.sample(100)
+        ```
+        &#34;&#34;&#34;
+        table = self.infer(give_table=True)
+        idx = np.random.choice(table.index, p=table.prob, replace=True, size=n_samples)
+        return table.loc[idx].reset_index(drop=True).drop(columns=[&#39;prob&#39;])</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="brent.query.Query.__init__"><code class="name flex">
+<span>def <span class="ident">__init__</span></span>(<span>self, dag, given=None, do=None, counterfact=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A <code>brent.Query</code> object describes a query that will be run
+on a <code>brent.DAG</code> object.</p>
+<p>Inputs:</p>
+<ul>
+<li><strong>dag</strong>: DAG object that contains all edges.</li>
+<li><strong>given</strong>: Dictionary of key-value pairs of given items.</li>
+<li><strong>do</strong>: Dictionary of key-value pairs of do operated items.</li>
+<li><strong>counterfact</strong>: Dictionary of key-value pairs of counterfact operated items.</li>
+</ul>
+<p>Example:</p>
+<pre><code>from brent import DAG, Query
+from brent.common import make_fake_df
+# let's start with a new dataset
+df = make_fake_df(4)
+dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &quot;c&quot;).add_edge(&quot;c&quot;,&quot;d&quot;)
+# we can build a query dynamically
+q1 = Query().given(a=1).do(d=1)
+# alternatively we can build one from start
+q2 = Query(given={'a':1}, do={'d':1})
+</code></pre></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
+    &#34;&#34;&#34;
+    A `brent.Query` object describes a query that will be run
+    on a `brent.DAG` object.
+
+    Inputs:
+
+    - **dag**: DAG object that contains all edges.
+    - **given**: Dictionary of key-value pairs of given items.
+    - **do**: Dictionary of key-value pairs of do operated items.
+    - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
+
+    Example:
+
+    ```
+    from brent import DAG, Query
+    from brent.common import make_fake_df
+    # let&#39;s start with a new dataset
+    df = make_fake_df(4)
+    dag = DAG(df).add_edge(&#34;a&#34;, &#34;b&#34;).add_edge(&#34;b&#34;, &#34;c&#34;).add_edge(&#34;c&#34;,&#34;d&#34;)
+    # we can build a query dynamically
+    q1 = Query().given(a=1).do(d=1)
+    # alternatively we can build one from start
+    q2 = Query(given={&#39;a&#39;:1}, do={&#39;d&#39;:1})
+    ```
+    &#34;&#34;&#34;
+    self.dag = dag
+    if not given:
+        given = dict()
+    if not do:
+        do = dict()
+    if not counterfact:
+        counterfact = dict()
+    self.given_dict = given
+    self.do_dict = do
+    self.counterfact = counterfact</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.counterfact"><code class="name flex">
+<span>def <span class="ident">counterfact</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add items to the query that are observed but will be counterfacted.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>kwargs</strong>: key-value pairs of observations to be counterfacted.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def counterfact(self, **kwargs):
+    &#34;&#34;&#34;
+    Add items to the query that are observed but will be counterfacted.
+
+    ## Inputs
+
+    - **kwargs**: key-value pairs of observations to be counterfacted.
+    &#34;&#34;&#34;
+    self._check_query_input(**kwargs)
+    return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.do"><code class="name flex">
+<span>def <span class="ident">do</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add items to the query that are enforced via <code>do</code> operation.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>kwargs</strong>: key-value pairs of do items.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def do(self, **kwargs):
+    &#34;&#34;&#34;
+    Add items to the query that are enforced via `do` operation.
+
+    ## Inputs
+
+    - **kwargs**: key-value pairs of do items.
+    &#34;&#34;&#34;
+    self._check_query_input(**kwargs)
+    return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.given"><code class="name flex">
+<span>def <span class="ident">given</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add items to the query that are <code>given</code>.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>kwargs</strong>: key-value pairs of given items.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def given(self, **kwargs):
+    &#34;&#34;&#34;
+    Add items to the query that are `given`.
+
+    ## Inputs
+
+    - **kwargs**: key-value pairs of given items.
+    &#34;&#34;&#34;
+    self._check_query_input(**kwargs)
+    return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.infer"><code class="name flex">
+<span>def <span class="ident">infer</span></span>(<span>self, give_table=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Run the inference on the graph given the current query.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>give_table</strong>: Instead of calculating marginal probabilities and
+returning a dictionary, return a pandas table instead. Defaults to <code>False</code>.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def infer(self, give_table=False):
+    &#34;&#34;&#34;
+    Run the inference on the graph given the current query.
+
+    ## Inputs
+
+    - **give_table**: Instead of calculating marginal probabilities and
+    returning a dictionary, return a pandas table instead. Defaults to `False`.
+    &#34;&#34;&#34;
+    logging.debug(f&#34;about to make an inference&#34;)
+    infer_dag = self.inference_dag()
+    for node in infer_dag.nodes:
+        logging.debug(f&#34;confirming parents({node}) = {infer_dag.parents(node)}&#34;)
+    marginal_table = infer_dag.marginal_table
+    for k, v in {**self.do_dict, **self.given_dict}.items():
+        logging.debug(f&#34;processing {k}={v}&#34;)
+        marginal_table = marginal_table.loc[lambda d: d[k] == v]
+    tbl = marginal_table.assign(prob=lambda d: normalise(d.prob))
+    if give_table:
+        return tbl
+    output = {}
+    for c in tbl.columns:
+        if c != &#34;prob&#34;:
+            output[c] = tbl.groupby(c)[&#39;prob&#39;].sum().to_dict()
+    return output</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.infer_counterfact"><code class="name flex">
+<span>def <span class="ident">infer_counterfact</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>If counterfact is in the query we will need to return.</p>
+<p>The counterfacted variable is first assumed to be "given". We apply inference
+on the entire graph as a first step. This gives us probabilities for all values.
+This is the new graph definition.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def infer_counterfact(self):
+    &#34;&#34;&#34;
+    If counterfact is in the query we will need to return.
+
+    The counterfacted variable is first assumed to be &#34;given&#34;. We apply inference
+    on the entire graph as a first step. This gives us probabilities for all values.
+    This is the new graph definition.
+
+
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.inference_dag"><code class="name flex">
+<span>def <span class="ident">inference_dag</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This is a DAG created from the original but has been altered
+to accomodate <code>do-calculus</code>.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def inference_dag(self):
+    &#34;&#34;&#34;
+    This is a DAG created from the original but has been altered
+    to accomodate `do-calculus`.
+    &#34;&#34;&#34;
+    infer_dag = DAG(self.dag.df.copy())
+    logging.debug(f&#34;constructing copy of original DAG nodes: {infer_dag.nodes}&#34;)
+    for n1, n2 in self.dag.edges:
+        if n2 not in self.do_dict.keys():
+            infer_dag.add_edge(n1, n2)
+        else:
+            logging.debug(f&#34;edge {n1} -&gt; {n2} ignored because of do operator&#34;)
+    logging.debug(f&#34;original DAG copied&#34;)
+    return infer_dag</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>A pretty plotting function. Given nodes have double circles.
+Nodes with <code>do</code> operations on them will have in-going arcs grayed.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def plot(self):
+    &#34;&#34;&#34;
+    A pretty plotting function. Given nodes have double circles.
+    Nodes with `do` operations on them will have in-going arcs grayed.
+    &#34;&#34;&#34;
+    givens = self.given_dict.keys()
+    dos = self.do_dict.keys()
+    d = Digraph()
+    d.attr(rankdir=&#39;LR&#39;)
+    d.attr(&#39;node&#39;, shape=&#39;circle&#39;)
+    for idx, n in enumerate(self.dag.graph.nodes):
+        if (n in givens) or (n in dos):
+            d.node(n, shape=&#39;doublecircle&#39;)
+        if n in dos:
+            d.node(&#34; &#34; * idx, shape=&#34;none&#34;)
+            d.edge(&#34; &#34; * idx, n)
+        else:
+            d.node(n)
+    for n1, n2 in self.dag.graph.edges:
+        if n2 in dos:
+            d.edge(n1, n2, color=&#34;lightgray&#34;, style=&#34;dashed&#34;)
+        else:
+            d.edge(n1, n2)
+    return d</code></pre>
+</details>
+</dd>
+<dt id="brent.query.Query.sample"><code class="name flex">
+<span>def <span class="ident">sample</span></span>(<span>self, n_samples=1)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Sample data from the current query.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>n_samples</strong>: the number of samples to get</li>
+</ul>
+<h2 id="output">Output</h2>
+<p><code>pandas.DataFrame</code> with new samples</p>
+<h2 id="example">Example</h2>
+<p>Example:</p>
+<pre><code>from brent import DAG, Query
+from brent.common import make_fake_df
+# let's start with a new dataset
+df = make_fake_df(4)
+dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &quot;c&quot;).add_edge(&quot;c&quot;,&quot;d&quot;)
+# we can build a query dynamically
+q1 = Query().given(a=1).do(d=1)
+q1.sample(100)
+</code></pre></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def sample(self, n_samples=1):
+    &#34;&#34;&#34;
+    Sample data from the current query.
+
+    ## Inputs
+
+    - **n_samples**: the number of samples to get
+
+    ## Output
+
+    `pandas.DataFrame` with new samples
+
+    ## Example
+
+    Example:
+
+    ```
+    from brent import DAG, Query
+    from brent.common import make_fake_df
+    # let&#39;s start with a new dataset
+    df = make_fake_df(4)
+    dag = DAG(df).add_edge(&#34;a&#34;, &#34;b&#34;).add_edge(&#34;b&#34;, &#34;c&#34;).add_edge(&#34;c&#34;,&#34;d&#34;)
+    # we can build a query dynamically
+    q1 = Query().given(a=1).do(d=1)
+    q1.sample(100)
+    ```
+    &#34;&#34;&#34;
+    table = self.infer(give_table=True)
+    idx = np.random.choice(table.index, p=table.prob, replace=True, size=n_samples)
+    return table.loc[idx].reset_index(drop=True).drop(columns=[&#39;prob&#39;])</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="brent" href="index.html">brent</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="brent.query.Query" href="#brent.query.Query">Query</a></code></h4>
+<ul class="two-column">
+<li><code><a title="brent.query.Query.__init__" href="#brent.query.Query.__init__">__init__</a></code></li>
+<li><code><a title="brent.query.Query.counterfact" href="#brent.query.Query.counterfact">counterfact</a></code></li>
+<li><code><a title="brent.query.Query.do" href="#brent.query.Query.do">do</a></code></li>
+<li><code><a title="brent.query.Query.given" href="#brent.query.Query.given">given</a></code></li>
+<li><code><a title="brent.query.Query.infer" href="#brent.query.Query.infer">infer</a></code></li>
+<li><code><a title="brent.query.Query.infer_counterfact" href="#brent.query.Query.infer_counterfact">infer_counterfact</a></code></li>
+<li><code><a title="brent.query.Query.inference_dag" href="#brent.query.Query.inference_dag">inference_dag</a></code></li>
+<li><code><a title="brent.query.Query.plot" href="#brent.query.Query.plot">plot</a></code></li>
+<li><code><a title="brent.query.Query.sample" href="#brent.query.Query.sample">sample</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.2</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
