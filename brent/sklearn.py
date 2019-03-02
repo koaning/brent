@@ -37,16 +37,56 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
         self.query = None
         self.k = self.dag.df[to_predict].nunique()
 
-    def fit(self, X: pd.DataFrame, y):
+    def check_dataframe_(self, X):
         for node in self.dag.nodes:
             if node not in X.columns:
                 raise ValueError(f"column {node} not in dataframe but in DAG")
+
+    def fit(self, X: pd.DataFrame, y):
+        """
+        Make the estimator "train". This is a bit verbose since the `brent.DAG` object
+        is already pretrained. We mainly check if the supplied dataframe given in `X`
+        is consistent with the graph.
+
+        ## Inputs
+
+        - **X**: a dataframe to be used
+        - **y**: ignored but required by the api
+
+        ## Output
+
+        A "trained" classifier that can be used in scikit-learn pipelines.
+        """
+        self.check_dataframe_(X)
         return self
 
     def predict(self, X):
+        """
+        Predict the class.
+
+        ## Inputs
+
+        - **X**: a dataframe to be used
+
+        ## Output
+
+        A numpy array containing the predicted classes.
+        """
         return np.argmax(self.predict_proba(X), axis=1)
 
     def predict_proba(self, X):
+        """
+        Predict the probabilities for all classes
+
+        ## Inputs
+
+        - **X**: a dataframe to be used
+
+        ## Output
+
+        A numpy array (num_rows, num_classes) containing the predicted classes.
+        """
+        self.check_dataframe_(X)
         predictions = np.zeros((X.shape[0], self.k))
         for idx, row in X[self.to_use].reset_index(drop=True).iterrows():
             query = Query(dag=self.dag, given=row.to_dict())
