@@ -14,6 +14,12 @@ want to write complex queries on it.
 
 ## Quickstart 
 
+You can install brent via pip: 
+
+```bash
+pip install brent
+```
+
 First we need to have a dataset and create a graph from it. 
 The code below demonstrates how to do this.  
 
@@ -68,6 +74,7 @@ Liked the quickstart? The documentation (which is generated with [pdoc3](https:/
 2. api for counterfactual queries 
 3. more unit tests
 4. datasets to start/teach with 
+5. clear logging 
 
 
 ## Developing Locally 
