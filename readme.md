@@ -16,12 +16,6 @@ want to write complex queries on it.
 
 The documentation (which is generated with [pdoc3](https://github.com/pdoc3/pdoc)) can be found [here](https://koaning.github.io/brent/).
 
-## Plotting 
-
-One of the main features is pretty pictures! 
-
-![](images/dag2.svg)
-
 ## Quickstart 
 
 First we need to have a dataset and create a graph from it. 
