@@ -2,7 +2,7 @@
 
 
 ![](images/logo.png)
-> They're good DAGs brent. 
+> They're good DAGs: brent. 
 
 ## What it is
 
