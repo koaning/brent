@@ -51,6 +51,8 @@ def normalise(x):
     normalise(np.array([1,2,3,4]))
     ```
     """
+    if isinstance(x, list):
+        x = np.array(x)
     return x / x.sum()
 
 
