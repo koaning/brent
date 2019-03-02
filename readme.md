@@ -20,7 +20,7 @@ You can install brent via pip:
 pip install brent
 ```
 
-First we need to have a dataset and create a graph from it. 
+Next we need to have a dataset and create a graph from it. 
 The code below demonstrates how to do this.  
 
 ```python
