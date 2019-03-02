@@ -4,6 +4,15 @@
 ![](images/logo.png)
 > They're good DAGs brent. 
 
+## Alpha Notice 
+
+*NOTE!* this project is in preview stages. I think I have something fun here and I've written unit tests on what I'm doing but parts are still going under review. Also there are parts of the library currently missing but which are on a roadmap: 
+
+1. conditional indepdence tests 
+2. api for counterfactual queries 
+3. more unit tests
+4. datasets to start/teach with 
+
 ## What it is
 
 Brent is a small, but fun, python library that makes it easy to explore causal graphical modelling and do-calculus
