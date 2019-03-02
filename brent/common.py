@@ -100,6 +100,28 @@ def window(seq, n=2):
 
 
 def check_node_blocking(arrow_before, arrow_after, name):
+    """
+    Checks if a node is a blocking node. As a side effects logs can be
+    written if you listen to `logging.debug`.
+
+    ## Inputs
+    - **arrow_before**: the direction of the arrow before the node
+    - **arrow_after**: the direction of the arrow after the node
+    - **name**: name of the node in question, if the string "given" is
+                in it we will assume that it is given.
+
+    ## Output
+    Return `True`/`False`.
+
+    ## Example
+
+    ```
+    from brent.common import check_node_blocking
+
+    check_node_blocking("->", "->", "given_a") # True
+    check_node_blocking("->", "->", "a") # False
+    ```
+    """
     given = "given" in name
     if (arrow_before == '<-') and (arrow_after == '->'):
         blocking = True if given else False
@@ -116,6 +138,29 @@ def check_node_blocking(arrow_before, arrow_after, name):
 
 
 def is_path_blocked(path_list):
+    """
+    Given a list of nodes and arcs, this function checks if the path is
+    probabilistically blocked. We check if the path is blocked between
+    the first and last element.
+
+    ## Inputs
+    - **path_list**: iterable of node_names (which might have the `given_` prefix
+                     to indicate that it is given) which are alternated by arrows
+                     ("->" or "<-") indicating the direction of the arcs on the path
+
+    ## Output
+
+    Return `True`/`False`.
+
+    ## Example
+
+    ```
+    from brent.common import is_path_blocked
+
+    check_node_blocking(["a", "->", "b", "->", "c") # False
+    check_node_blocking(["a", "->", "given_b", "->", "c") # False
+    ```
+    """
     for idx, name in enumerate(path_list):
         if idx in [0, len(path_list) - 1]:
             pass
