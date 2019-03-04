@@ -37,7 +37,7 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
         self.query = None
         self.k = self.dag.df[to_predict].nunique()
 
-    def check_dataframe_(self, X):
+    def _check_dataframe(self, X):
         for node in self.dag.nodes:
             if node not in X.columns:
                 raise ValueError(f"column {node} not in dataframe but in DAG")
@@ -57,7 +57,7 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
 
         A "trained" classifier that can be used in scikit-learn pipelines.
         """
-        self.check_dataframe_(X)
+        self._check_dataframe(X)
         return self
 
     def predict(self, X):
@@ -86,7 +86,7 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
 
         A numpy array (num_rows, num_classes) containing the predicted classes.
         """
-        self.check_dataframe_(X)
+        self._check_dataframe(X)
         predictions = np.zeros((X.shape[0], self.k))
         for idx, row in X[self.to_use].reset_index(drop=True).iterrows():
             query = Query(dag=self.dag, given=row.to_dict())
