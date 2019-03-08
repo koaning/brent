@@ -29,7 +29,7 @@ def simple_study_dataset():
              0.1, 0.5, 0.4]
     zipprod = zip(it.product(study, hard, grade), probs)
     tween = reduce(lambda a, b: a + b, [[c] * int(p * 100) for c, p in zipprod])
-    pd.DataFrame(tween, columns=["study", "hard", "grade"])
+    return pd.DataFrame(tween, columns=["study", "hard", "grade"])
 
 
 def simple_sickness():
