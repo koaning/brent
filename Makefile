@@ -3,17 +3,17 @@ flake:
 	flake8 tests
 
 install:
-	pip install -e .
+	pip install -e ".[dev]"
 
 develop:
 	python setup.py develop
 
 test:
-	pytest --nbval-lax
+	pytest
 
 clean:
 	rm -rf .pytest_cache
-	rm -rf dagger.egg-info
+	rm -rf brent.egg-info
 	rm -rf html
 	rm -rf docs
 	rm -rf dist
