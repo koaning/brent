@@ -109,7 +109,7 @@ class Query:
         self._check_query_input(**kwargs)
         return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})
 
-    def plot(self):
+    def plot(self, emphesize_do=True):
         """
         A pretty plotting function. Given nodes have double circles.
         Nodes with `do` operations on them will have in-going arcs grayed.
@@ -123,12 +123,15 @@ class Query:
             if (n in givens) or (n in dos):
                 d.node(n, shape='doublecircle')
             if n in dos:
-                d.node(" " * idx, shape="none")
-                d.edge(" " * idx, n)
+                if emphesize_do:
+                    d.node(" " * idx, shape="none")
+                    d.edge(" " * idx, n)
             else:
                 d.node(n)
         for n1, n2 in self.dag.graph.edges:
-            if n2 in dos:
+            if ((n1 in dos) or (n1 in givens)) and ((n2 in dos) or (n2 in givens)):
+                    d.edge(n1, n2, color="lightgray")
+            elif n2 in dos:
                 d.edge(n1, n2, color="lightgray", style="dashed")
             else:
                 d.edge(n1, n2)
