@@ -229,13 +229,22 @@ class SupposeQuery:
         return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do=self.suppose_do_dict,
                             suppose_given={**self.suppose_given_dict, **kwargs})
 
-    def infer(self):
+    def infer(self, give_table=False):
+        if self.orig_query is None:
+            raise ValueError("SupposeQuery needs a `when` parameter defined.")
         orig_query_table = self.orig_query.infer(give_table=True)
         names_to_omit = list(self.orig_query.given_dict.keys()) + list(self.orig_query.do_dict.keys())
-        names_to_join = [n for n in q.dag.nodes if n not in names_to_omit]
+        names_to_join = [n for n in self.orig_query.dag.nodes if n not in names_to_omit]
         new_query = Query(dag=self.dag, given=self.suppose_given_dict, do=self.suppose_do_dict).infer(give_table=True)
-        return (new_query
+        tbl = (new_query
                 .merge(orig_query_table[names_to_join + ['prob']], on=names_to_join)
                 .assign(prob=lambda d: d.prob_y * d.prob_x)
                 .assign(prob=lambda d: d.prob / d.prob.sum())
                 .drop(columns=["prob_x", "prob_y"]))
+        if give_table:
+            return tbl
+        output = {}
+        for c in tbl.columns:
+            if c != "prob":
+                output[c] = tbl.groupby(c)['prob'].sum().to_dict()
+        return output

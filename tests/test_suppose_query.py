@@ -35,3 +35,9 @@ def test_value_error_wrong_key(simple_dag):
     q = Query(dag=simple_dag).given(b=1)
     with pytest.raises(ValueError):
         SupposeQuery(dag=simple_dag).when(q).suppose_do(foobar=1)
+
+
+def test_value_error_inference_no_when(simple_dag):
+    q = Query(dag=simple_dag).given(b=1)
+    with pytest.raises(ValueError):
+        SupposeQuery(dag=simple_dag).infer()
