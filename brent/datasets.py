@@ -43,7 +43,7 @@ def simple_sickness():
     chills   na  yep    na   bit
     tired  sure  yes  sure   yep
     """
-    pass
+    raise NotImplementedError("not yet implemented")
 
 
 def asian_cancer_dataset():
@@ -102,3 +102,5 @@ def blue_baby_dataset():
     return pd.read_csv("http://www.ccd.pitt.edu/wiki/images/CHILD10k.csv")
 
 
+def earthquake_dataset():
+    raise NotImplementedError("not yet implemented")
