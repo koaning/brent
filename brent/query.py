@@ -129,7 +129,7 @@ class Query:
                 d.node(n)
         for n1, n2 in self.dag.graph.edges:
             if ((n1 in dos) or (n1 in givens)) and ((n2 in dos) or (n2 in givens)):
-                    d.edge(n1, n2, color="lightgray")
+                d.edge(n1, n2, color="lightgray")
             elif n2 in dos:
                 d.edge(n1, n2, color="lightgray", style="dashed")
             else:
