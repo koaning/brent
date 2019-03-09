@@ -49,7 +49,7 @@ class DAG:
         self.graph = nx.DiGraph()
         for node in self.df.columns:
             self.graph.add_node(node)
-        self.baked = False
+        self.cached = False
         self.prob_tables = {}
 
     @property
@@ -149,17 +149,17 @@ class DAG:
                 active_paths.append(z_path)
         return active_paths
 
-    def bake(self):
+    def cache(self):
         """
-        When calling `.bake()` the API will realise that the graph will no longer change.
+        When calling `.cache()` the API will realise that the graph will no longer change.
         We will also cache all the probability tables that are associated with a node.
         :return:
         """
-        if self.baked:
-            raise ValueError("cannot call `.bake()` on a DAG that is already baked!")
+        if self.cached:
+            raise ValueError("cannot call `.cache()` on a DAG that is already cached!")
         for node in self.nodes:
             self.prob_tables[node] = self.calc_node_table(node)
-        self.baked = True
+        self.cached = True
         return self
 
     def calc_node_table(self, name):
@@ -259,7 +259,7 @@ class DAG:
             raise ValueError(f"cause {source} not in dataframe")
         if sink not in self.df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
-        if self.baked:
+        if self.cached:
             raise RuntimeError("Cannot change a graph when the dag is baked.")
         new_graph = self.graph.copy()
         new_graph.add_edge(source, sink)

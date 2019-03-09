@@ -15,9 +15,9 @@ def basic_dag():
 
 
 def test_after_bake_calc_node_still_works(basic_dag):
-    basic_dag.bake().calc_node_table("a")
+    basic_dag.cache().calc_node_table("a")
 
 
 def test_after_bake_no_graph_changes_allowed(basic_dag):
     with pytest.raises(RuntimeError):
-        basic_dag.bake().add_edge("d", "e")
+        basic_dag.cache().add_edge("d", "e")

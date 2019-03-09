@@ -76,4 +76,4 @@ def test_node_table_throws_value_error(basic_dag):
 
 
 def test_after_bake_calc_node_still_works(basic_dag):
-    basic_dag.bake().calc_node_table("a")
+    basic_dag.cache().calc_node_table("a")
