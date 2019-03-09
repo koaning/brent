@@ -1,7 +1,7 @@
-import pandas as pd
+import pytest
 from brent.datasets import *
 
 
-def test_datasets_load():
-    for d in [alarm_dataset, asian_cancer_dataset, blue_baby_dataset, simple_study_dataset]:
-        assert isinstance(d(), pd.DataFrame)
+@pytest.mark.parametrize("dataset", [alarm_dataset, asian_cancer_dataset, blue_baby_dataset, simple_study_dataset])
+def test_datasets_load(dataset):
+    assert isinstance(dataset(), pd.DataFrame)

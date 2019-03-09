@@ -1,3 +1,4 @@
+import pytest
 from pytest import fixture, approx
 import pandas as pd
 
@@ -67,3 +68,12 @@ def test_merge_probs_simple(basic_dag):
             .to_dict("list")["prob"])
     assert res3[0] == approx(.5, abs=0.01)
     assert res3[1] == approx(.5, abs=0.01)
+
+
+def test_node_table_throws_value_error(basic_dag):
+    with pytest.raises(ValueError):
+        basic_dag.calc_node_table("z")
+
+
+def test_after_bake_calc_node_still_works(basic_dag):
+    basic_dag.bake().calc_node_table("a")

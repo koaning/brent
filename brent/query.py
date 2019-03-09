@@ -237,10 +237,10 @@ class SupposeQuery:
         names_to_join = [n for n in self.orig_query.dag.nodes if n not in names_to_omit]
         new_query = Query(dag=self.dag, given=self.suppose_given_dict, do=self.suppose_do_dict).infer(give_table=True)
         tbl = (new_query
-                .merge(orig_query_table[names_to_join + ['prob']], on=names_to_join)
-                .assign(prob=lambda d: d.prob_y * d.prob_x)
-                .assign(prob=lambda d: d.prob / d.prob.sum())
-                .drop(columns=["prob_x", "prob_y"]))
+               .merge(orig_query_table[names_to_join + ['prob']], on=names_to_join)
+               .assign(prob=lambda d: d.prob_y * d.prob_x)
+               .assign(prob=lambda d: d.prob / d.prob.sum())
+               .drop(columns=["prob_x", "prob_y"]))
         if give_table:
             return tbl
         output = {}
@@ -248,3 +248,5 @@ class SupposeQuery:
             if c != "prob":
                 output[c] = tbl.groupby(c)['prob'].sum().to_dict()
         return output
+
+# TODO: association_query vs. intervention_query vs. counterfactual_query
