@@ -12,7 +12,7 @@ def generate_risk_dag(attackers=3, defenders=2, battle_size=2):
     in order to win. The `losses` node in the graph corresponds to the losses
     that the attacker incurs after the battle.
 
-    This dataset is used in the corresponding `brent.examples.generate_risk_example`.
+    This dag is used in the corresponding `brent.datasets.generate_risk_dataset`.
 
     ## Input
 
@@ -22,7 +22,7 @@ def generate_risk_dag(attackers=3, defenders=2, battle_size=2):
 
     ## Output
 
-    A `brent.DAG` object with correct arcs, ready for queries.
+    A DAG object with correct arcs, ready for queries.
     """
     if min(attackers, defenders) < battle_size:
         raise ValueError(

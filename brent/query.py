@@ -16,8 +16,7 @@ from brent.common import normalise
 class Query:
     def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
         """
-        A `brent.Query` object describes a query that will be run
-        on a `brent.DAG` object.
+        A Query object describes a query that will be run on a DAG object.
 
         Inputs:
 
@@ -130,7 +129,7 @@ class Query:
                 d.node(n)
         for n1, n2 in self.dag.graph.edges:
             if ((n1 in dos) or (n1 in givens)) and ((n2 in dos) or (n2 in givens)):
-                    d.edge(n1, n2, color="lightgray")
+                d.edge(n1, n2, color="lightgray")
             elif n2 in dos:
                 d.edge(n1, n2, color="lightgray", style="dashed")
             else:
