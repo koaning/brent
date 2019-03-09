@@ -152,7 +152,7 @@ class DAG:
     def bake(self):
         """
         When calling `.bake()` the API will realise that the graph will no longer change.
-        This makes querying faster makes the graph static.
+        We will also cache all the probability tables that are associated with a node.
         :return:
         """
         if self.baked:
