@@ -1,5 +1,5 @@
 import pytest
-from brent.examples import *
+from brent.examples import generate_risk_dag
 
 
 def test_risk_dag_error():
