@@ -20,11 +20,12 @@ setup(
     install_requires=base_packages,
     extras_require={
         "dev": ["flake8>=3.6.0", "pytest>=3.3.1", "pdoc3>=0.5.2",
-                "nbval>=0.9.1", "plotnine>=0.5.1"]
+                "nbval>=0.9.1", "plotnine>=0.5.1", "twine>=1.13.0"]
     },
     classifiers=['Intended Audience :: Developers',
                  'Intended Audience :: Science/Research',
                  'Programming Language :: Python :: 3.6',
+                 'Programming Language :: Python :: 3.7',
                  'Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: MIT License',
                  'Topic :: Scientific/Engineering',
