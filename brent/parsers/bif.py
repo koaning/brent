@@ -20,7 +20,9 @@ def join_independent(this_df: pd.DataFrame, that_df: pd.DataFrame) -> pd.DataFra
     """
     Merges two probability dataframes assuming independent nodes
 
-    Example:
+    ## Example:
+
+    ```
     >>> this_df = pd.DataFrame({'A': ['true', 'false'], 'prob': [0.5, 0.5]})
     >>> that_df = pd.DataFrame({'B': ['true', 'false'], 'prob': [0.5, 0.5]})
     >>> join_independent(this_df, that_df) # doctest: +NORMALIZE_WHITESPACE
@@ -29,6 +31,7 @@ def join_independent(this_df: pd.DataFrame, that_df: pd.DataFrame) -> pd.DataFra
     1   true  false  0.25
     2  false   true  0.25
     3  false  false  0.25
+    ```
     """
     if 'prob' not in this_df.columns:
         raise ValueError('this_df should contain a `prob` column containing probabilities')
@@ -52,7 +55,9 @@ def join_dependent(this_df: pd.DataFrame, that_df: pd.DataFrame) -> pd.DataFrame
 
     `that_df` should have two columns `B` and `prob` and its index should be set to `A`'s values.
 
-    Example:
+    ## Example:
+
+    ```
     >>> this_df = pd.DataFrame({'A': ['true', 'false'], 'prob': [0.5, 0.5]})
     >>> that_df = pd.DataFrame({
     ... 'A': ['true', 'false', 'true', 'false'],
@@ -64,7 +69,7 @@ def join_dependent(this_df: pd.DataFrame, that_df: pd.DataFrame) -> pd.DataFrame
     0   true  false  0.40
     1  false   true  0.35
     1  false  false  0.10
-
+    ```
     """
     if 'prob' not in this_df.columns:
         raise ValueError('this_df should contain a `prob` column containing probabilities')
