@@ -16,8 +16,7 @@ from brent.common import normalise
 class Query:
     def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
         """
-        A `brent.Query` object describes a query that will be run
-        on a `brent.DAG` object.
+        A Query object describes a query that will be run on a DAG object.
 
         Inputs:
 

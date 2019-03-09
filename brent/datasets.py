@@ -117,7 +117,7 @@ def generate_risk_dataset(attackers=3, defenders=2, battle_size=2):
     in order to win. The `losses` column in the dataframe corresponds to the losses
     that the attacker incurs after the battle.
 
-    This dataset is used in the corresponding `brent.examples.generate_risk_example`.
+    This dataset is used in the corresponding `brent.examples.generate_risk_dag`.
 
     ## Input
 

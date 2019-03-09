@@ -15,12 +15,18 @@ clean:
 	rm -rf .pytest_cache
 	rm -rf brent.egg-info
 	rm -rf html
-	rm -rf docs
 	rm -rf dist
 	rm -rf build
 	rm -rf .ipynb_checkpoints
 
 check: test flake
 
-docs:
+docsrv:
 	pdoc --html --overwrite --template-dir doc-settings --http 0.0.0.0:12345 brent
+
+doc:
+	pdoc --html --overwrite --template-dir doc-settings brent
+	rm -r docs
+	mkdir docs
+	mv html/brent/* docs
+	rm -r html

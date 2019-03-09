@@ -15,9 +15,9 @@ from brent.common import normalise, window, is_path_blocked
 
 class DAG:
     """
-    A `brent.DAG` object describes a graphical model of a dataset. This
-    object is generated from a pandas dataframe. Every column in the
-    dataframe will result in a node/variable in the `brent.DAG` object.
+    A Directed-Acyclic-Graph (DAG) object describes a graphical model of a dataset.
+    This object is generated from a pandas dataframe. Every column in the
+    dataframe will result in a node/variable in the DAG object.
 
     ```
     from brent import DAG
@@ -29,7 +29,7 @@ class DAG:
     """
     def __init__(self, dataframe: pd.DataFrame):
         """
-        Create a new `brent.DAG` from a dataframe.
+        Create a new DAG from a dataframe.
 
         Inputs:
 
