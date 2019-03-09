@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from brent import parsers
-from brent.parsers.bif import join_independent, join_dependent, parse_network_type, parse_variables, \
+from brent.parsers.bif import parse_network_type, parse_variables, \
     parse_unconditional_probabilities, parse_conditional_probabilities
 
 
@@ -39,64 +39,6 @@ probability ( D | B, A ) {
   (no, no) 0.0, 1.0;
 }
 """
-
-
-@pytest.fixture
-def prob_a():
-    return pd.DataFrame({'A': ['true', 'false'], 'prob': [0.5, 0.5]})
-
-
-@pytest.fixture
-def prob_b():
-    return pd.DataFrame({'B': ['true', 'false'], 'prob': [0.5, 0.5]})
-
-
-@pytest.fixture
-def cond_prob_b():
-    return pd.DataFrame({
-        'A': ['true', 'false', 'true', 'false'],
-        'B': ['true', 'true', 'false', 'false'],
-        'prob': [0.3, 0.7, 0.8, 0.2]}).set_index('A')
-
-
-def test_join_independent(prob_a, prob_b):
-    target = pd.DataFrame({
-        'A': ['true', 'true', 'false', 'false'],
-        'B': ['true', 'false', 'true', 'false'],
-        'prob': [0.25, 0.25, 0.25, 0.25]
-    })
-    pd.testing.assert_frame_equal(join_independent(prob_a, prob_b), target)
-
-
-def test_join_independent_input_checks(prob_a, prob_b):
-    with pytest.raises(ValueError):
-        join_independent(prob_a.drop(columns=['prob']), prob_b)
-
-    with pytest.raises(ValueError):
-        join_independent(prob_a, prob_b.drop(columns=['prob']))
-
-
-def test_join_dependent(prob_a, cond_prob_b):
-    target = pd.DataFrame({
-        'A': ['true', 'true', 'false', 'false'],
-        'B': ['true', 'false', 'true', 'false'],
-        'prob': [0.15, 0.4, 0.35, 0.1]
-    })
-    pd.testing.assert_frame_equal(join_dependent(prob_a, cond_prob_b), target)
-
-
-def test_join_dependent_input_checks(prob_a, cond_prob_b):
-    with pytest.raises(ValueError):
-        join_dependent(prob_a.drop(columns=['prob']), cond_prob_b)
-
-    with pytest.raises(ValueError):
-        join_dependent(prob_a, cond_prob_b.drop(columns=['prob']))
-
-    with pytest.raises(ValueError):
-        join_dependent(prob_a.drop(columns=['A']), cond_prob_b)
-
-    with pytest.raises(ValueError):
-        join_dependent(prob_a, cond_prob_b.reset_index())
 
 
 def test_parse(test_bif):

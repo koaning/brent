@@ -4,6 +4,8 @@ from typing import Tuple, List, Iterator
 
 import pandas as pd
 
+from brent.common import join_independent, join_dependent
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,82 +16,6 @@ PARSER_PATTERNS = {
     'cond_probability': r"probability \( (?P<varname>\w+) \| (?P<conditionals>[^)]*) \) {\s (?P<probs>[^\}]*)",
     'prob_table': r"^(\s+)? \((?P<keys>.*?)\) (?P<probabilities>[^;]*);",
 }
-
-
-def join_independent(this_df: pd.DataFrame, that_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Merges two probability dataframes assuming independent nodes
-
-    ## Example:
-
-    ```
-    >>> this_df = pd.DataFrame({'A': ['true', 'false'], 'prob': [0.5, 0.5]})
-    >>> that_df = pd.DataFrame({'B': ['true', 'false'], 'prob': [0.5, 0.5]})
-    >>> join_independent(this_df, that_df) # doctest: +NORMALIZE_WHITESPACE
-           A      B  prob
-    0   true   true  0.25
-    1   true  false  0.25
-    2  false   true  0.25
-    3  false  false  0.25
-    ```
-    """
-    if 'prob' not in this_df.columns:
-        raise ValueError('this_df should contain a `prob` column containing probabilities')
-    if 'prob' not in that_df.columns:
-        raise ValueError('that_df should contain a `prob` column containing probabilities')
-
-    return (this_df.assign(key=1)
-            .merge(that_df.assign(key=1), on='key')
-            .drop('key', 1)
-            .assign(prob=lambda d: d.prob_x * d.prob_y)
-            .drop(columns=['prob_x', 'prob_y'])
-            )
-
-
-def join_dependent(this_df: pd.DataFrame, that_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Merges two probability dataframes assuming dependencies between nodes by using that_df's indexes as conditionals.
-
-    If `this_df` denotes `p(A)` in table form and `that_df` denotes `p(B|A)` in table form
-    then the output of this function will denote `p(A, B)`.
-
-    `that_df` should have two columns `B` and `prob` and its index should be set to `A`'s values.
-
-    ## Example:
-
-    ```
-    >>> this_df = pd.DataFrame({'A': ['true', 'false'], 'prob': [0.5, 0.5]})
-    >>> that_df = pd.DataFrame({
-    ... 'A': ['true', 'false', 'true', 'false'],
-    ... 'B': ['true', 'true', 'false', 'false'],
-    ... 'prob': [0.3, 0.7, 0.8, 0.2]}).set_index('A')
-    >>> join_dependent(this_df, that_df) # doctest: +NORMALIZE_WHITESPACE
-           A      B  prob
-    0   true   true  0.15
-    0   true  false  0.40
-    1  false   true  0.35
-    1  false  false  0.10
-    ```
-    """
-    if 'prob' not in this_df.columns:
-        raise ValueError('this_df should contain a `prob` column containing probabilities')
-    if 'prob' not in that_df.columns:
-        raise ValueError('that_df should contain a `prob` column containing probabilities')
-
-    missing_names = [name for name in that_df.index.names if name not in this_df.columns]
-    if len(missing_names) > 0:
-        raise ValueError('missing_names are set as indexes to `that_df` but are not present in `this_df`')
-
-    if len(that_df.columns) > 2:
-        raise ValueError('`that_df` has more than two columns, perhaps you forgot to set the variables that '
-                         'are to be conditioned on as the index of the dataframe')
-
-    return (this_df
-            .merge(that_df, left_on=that_df.index.names, right_index=True)
-            .assign(prob=lambda d: d.prob_x * d.prob_y)
-            .drop(columns=['prob_x', 'prob_y'])
-            .reset_index(drop=True)
-            )
 
 
 def parse_network_type(bif: str) -> str:
