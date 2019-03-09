@@ -202,4 +202,3 @@ class Query:
         table = self.infer(give_table=True)
         idx = np.random.choice(table.index, p=table.prob, replace=True, size=n_samples)
         return table.loc[idx].reset_index(drop=True).drop(columns=['prob'])
-
