@@ -1,5 +1,8 @@
+import pandas as pd
 import pytest
-from brent.datasets import *
+
+from brent.datasets import alarm_dataset, asian_cancer_dataset, blue_baby_dataset, simple_study_dataset, \
+    generate_risk_dataset
 
 
 def test_datasets_load():
