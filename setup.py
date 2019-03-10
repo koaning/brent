@@ -15,6 +15,7 @@ setup(
     version="0.2.3",
     packages=find_packages(exclude=['data', 'notebooks']),
     long_description=read('readme.md'),
+    long_description_content_type='text/markdown',
     keywords=['causal', 'bayesian', 'graphical', 'model', 'inference'],
     python_requires='>=3.6',
     install_requires=base_packages,
