@@ -230,23 +230,30 @@ class SupposeQuery:
                             suppose_given={**self.suppose_given_dict, **kwargs})
 
     def infer(self, give_table=False):
+        """
+        Run the inference on the graph given the current query.
+
+        ## Inputs
+
+        - **give_table**: Instead of calculating marginal probabilities and
+        returning a dictionary, return a pandas table instead. Defaults to `False`.
+        """
         if self.orig_query is None:
             raise ValueError("SupposeQuery needs a `when` parameter defined.")
+        dag_copy = self.dag.copy().cache()
         orig_query_table = self.orig_query.infer(give_table=True)
         names_to_omit = list(self.orig_query.given_dict.keys()) + list(self.orig_query.do_dict.keys())
         names_to_join = [n for n in self.orig_query.dag.nodes if n not in names_to_omit]
-        new_query = Query(dag=self.dag, given=self.suppose_given_dict, do=self.suppose_do_dict).infer(give_table=True)
-        tbl = (new_query
-               .merge(orig_query_table[names_to_join + ['prob']], on=names_to_join)
-               .assign(prob=lambda d: d.prob_y * d.prob_x)
-               .assign(prob=lambda d: d.prob / d.prob.sum())
-               .drop(columns=["prob_x", "prob_y"]))
-        if give_table:
-            return tbl
-        output = {}
-        for c in tbl.columns:
-            if c != "prob":
-                output[c] = tbl.groupby(c)['prob'].sum().to_dict()
-        return output
 
-# TODO: association_query vs. intervention_query vs. counterfactual_query
+        for node in names_to_join:
+            associated_table = dag_copy.prob_tables[node]
+            colnames = list(associated_table.columns)
+            res = (orig_query_table[colnames]
+                   .groupby([_ for _ in colnames if _ != "prob"])
+                   .sum()["prob"]
+                   .reset_index())
+            dag_copy.prob_tables[node] = res
+
+        new_query = Query(dag=dag_copy, given=self.suppose_given_dict, do=self.suppose_do_dict)
+
+        return new_query.infer(give_table=give_table)
