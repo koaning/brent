@@ -1,5 +1,5 @@
 """
-The `brent.sklearn` module contains objects that be used in scikit-learn pipelines.
+The `sklearn` module contains objects that be used in scikit-learn pipelines.
 In particulate it offers a classifier as well as an imputer.
 """
 
@@ -22,7 +22,7 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
 
         ## Inputs
 
-        - **dag**: `brent.DAG` object that describes the dag
+        - **dag**: DAG object that describes the dag
         - **to_predict**: the column to predict
 
         ## Output
@@ -44,7 +44,7 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
 
     def fit(self, X: pd.DataFrame, y):
         """
-        Make the estimator "train". This is a bit verbose since the `brent.DAG` object
+        Make the estimator "train". This is a bit verbose since the DAG object
         is already pretrained. We mainly check if the supplied dataframe given in `X`
         is consistent with the graph.
 

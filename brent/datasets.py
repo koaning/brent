@@ -10,6 +10,7 @@ import itertools as it
 from functools import reduce
 
 import pandas as pd
+import numpy as np
 
 
 def simple_study_dataset():
@@ -104,3 +105,44 @@ def blue_baby_dataset():
 
 def earthquake_dataset():
     raise NotImplementedError("not yet implemented")
+
+
+def generate_risk_dataset(attackers=3, defenders=2, battle_size=2):
+    """
+    This dataset generalises a scenario in the RISK board game. In this game
+    typically three armies attack and two defend. The highest scoring attacker
+    (based on a dice roll) is matched with the highest scoring defender, the second
+    highest attacker goes with the second highest defender and so on. The defending
+    party has the advantage so the attacker needs to roll higher than the defender
+    in order to win. The `losses` column in the dataframe corresponds to the losses
+    that the attacker incurs after the battle.
+
+    This dataset is used in the corresponding `brent.examples.generate_risk_dag`.
+
+    ## Input
+
+    - **num_attackers**: The number of dice rolled by the attacker (default: 3)
+    - **num_defenders**: The number of dice rolled by the defender (default: 2)
+    - **num_attackers**: The number of armies that take part in the battle (default: 2)
+
+    ## Output
+
+    A dataframe with dice rolls, scores for participating armies and the loss outcome.
+    """
+    if min(attackers, defenders) < battle_size:
+        raise ValueError(
+            f"We demand min(num_attackers={attackers}, num_defenders={defenders}) >= battle_size={battle_size}.")
+    attack_names = [f"a{i}" for i in range(1, attackers + 1)]
+    defend_names = [f"d{i}" for i in range(1, defenders + 1)]
+    combinations = it.product(*[range(1, 6+1) for i in range(attackers + defenders)])
+    df = pd.DataFrame(combinations, columns=attack_names + defend_names)
+    for side in ['a', 'd']:
+        for b in range(1, battle_size + 1):
+            names = attack_names if side == 'a' else defend_names
+            df[f'best_{side}{b}'] = np.sort(df[names].values)[:, -b]
+
+    best_attackers = df[[c for c in df.columns if 'best' in c and 'a' in c]].values
+    best_defenders = df[[c for c in df.columns if 'best' in c and 'd' in c]].values
+
+    df['losses'] = (best_attackers > best_defenders).sum(axis=1)
+    return df

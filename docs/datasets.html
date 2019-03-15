@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.3" />
+<title>brent.datasets API documentation</title>
+<meta name="description" content="The `brent.datasets` module contains functions that will generate
+datasets. Typically these datasets are meant for educational purposes …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<link rel="icon" href="https://pdoc.github.io/pdoc/logo.png">
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>brent.datasets</code> module</h1>
+</header>
+<section id="section-intro">
+<p>The <a title="brent.datasets" href="#brent.datasets"><code>brent.datasets</code></a> module contains functions that will generate
+datasets. Typically these datasets are meant for educational purposes.</p>
+<p>Don't forget to see the docstring for a reference to the origin of the
+dataset.</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">&#34;&#34;&#34;
+The `brent.datasets` module contains functions that will generate
+datasets. Typically these datasets are meant for educational purposes.
+
+Don&#39;t forget to see the docstring for a reference to the origin of the
+dataset.
+&#34;&#34;&#34;
+
+import itertools as it
+from functools import reduce
+
+import pandas as pd
+import numpy as np
+
+
+def simple_study_dataset():
+    &#34;&#34;&#34;
+    Creates a simple dataset that simulates the probability of passing
+    a course given if the test for the course was hard and weather or
+    not a student studied. This is a fake dataset.
+    &#34;&#34;&#34;
+    grade = [&#34;good&#34;, &#34;pass&#34;, &#34;fail&#34;]
+    study = [&#34;lots&#34;, &#34;little&#34;, &#34;no&#34;]
+    hard = [&#34;yes&#34;, &#34;no&#34;]
+    probs = [0.6, 0.3, 0.1,
+             0.9, 0.09, 0.01,
+             0.3, 0.3, 0.4,
+             0.6, 0.2, 0.2,
+             0.1, 0.3, 0.6,
+             0.1, 0.5, 0.4]
+    zipprod = zip(it.product(study, hard, grade), probs)
+    tween = reduce(lambda a, b: a + b, [[c] * int(p * 100) for c, p in zipprod])
+    return pd.DataFrame(tween, columns=[&#34;study&#34;, &#34;hard&#34;, &#34;grade&#34;])
+
+
+def simple_sickness():
+    &#34;&#34;&#34;
+    Inspiration of the data: https://www.cdc.gov/flu/about/qa/coldflu.htm.
+           cold  flu  none astma
+    sneeze sure   na  sure   bit
+    cough   bit  yep  sure   yep
+    weak   sure  yep    na   bit
+    nose    yep sure  sure   bit
+    chills   na  yep    na   bit
+    tired  sure  yes  sure   yep
+    &#34;&#34;&#34;
+    raise NotImplementedError(&#34;not yet implemented&#34;)
+
+
+def asian_cancer_dataset():
+    &#34;&#34;&#34;
+    This function reads in the asian cancer dataset. It is a dataset
+    that has orignally also been featured in the `bnlearn` package. It
+    is simulated data but has been used historically in benchmarks.
+
+    The original description to the dataset can be found here:
+    http://www.bnlearn.com/bnrepository/discrete-small.html#cancer
+
+    ## Reference
+
+    S. Lauritzen, D. Spiegelhalter. Local Computation with Probabilities on
+    Graphical Structures and their Application to Expert Systems (with discussion).
+    Journal of the Royal Statistical Society: Series B (Statistical Methodology),
+    50(2):157-224, 1988.
+    &#34;&#34;&#34;
+    return pd.read_csv(&#34;http://www.ccd.pitt.edu/wiki/images/ASIA10k.csv&#34;)
+
+
+def alarm_dataset():
+    &#34;&#34;&#34;
+    This function reads in the alarm dataset which has historically been
+    used to describe alarms for monitoring stations for anesthesia.
+    It is a dataset that has orignally also been featured in the `bnlearn` package.
+    It is simulated data but has been used historically in benchmarks.
+
+    The original description to the dataset can be found here:
+    http://www.bnlearn.com/bnrepository/discrete-medium.html#alarm
+
+    ## Reference:
+    I. A. Beinlich, H. J. Suermondt, R. M. Chavez, and G. F. Cooper.
+    The ALARM Monitoring System: A Case Study with Two Probabilistic Inference
+    Techniques for Belief Networks. In Proceedings of the 2nd European Conference
+    on Artificial Intelligence in Medicine, pages 247-256. Springer-Verlag, 1989.
+    &#34;&#34;&#34;
+    return pd.read_csv(&#34;http://www.ccd.pitt.edu/wiki/images/ALARM10k.csv&#34;)
+
+
+def blue_baby_dataset():
+    &#34;&#34;&#34;
+    This function reads in the blue baby dataset. It involves a
+    network for diagnosing congenital heart disease in a new born &#34;blue baby&#34;.
+    It is a dataset that has orignally also been featured in the `bnlearn` package.
+    It is simulated data but has been used historically in benchmarks.
+
+    The original description to the dataset can be found here:
+    http://www.bnlearn.com/bnrepository/discrete-medium.html#child
+
+    ## Reference
+    D. J. Spiegelhalter, R. G. Coewll (1992). Learning in probabilistic expert systems.
+    In Bayesian Statistics 4 (J. M. Bernardo, J. 0. Berger, A. P. Dawid and A. F. M.
+    Smith, eds.) 447-466. Clarendon Press, Oxford.
+    &#34;&#34;&#34;
+    return pd.read_csv(&#34;http://www.ccd.pitt.edu/wiki/images/CHILD10k.csv&#34;)
+
+
+def earthquake_dataset():
+    raise NotImplementedError(&#34;not yet implemented&#34;)
+
+
+def generate_risk_dataset(attackers=3, defenders=2, battle_size=2):
+    &#34;&#34;&#34;
+    This dataset generalises a scenario in the RISK board game. In this game
+    typically three armies attack and two defend. The highest scoring attacker
+    (based on a dice roll) is matched with the highest scoring defender, the second
+    highest attacker goes with the second highest defender and so on. The defending
+    party has the advantage so the attacker needs to roll higher than the defender
+    in order to win. The `losses` column in the dataframe corresponds to the losses
+    that the attacker incurs after the battle.
+
+    This dataset is used in the corresponding `brent.examples.generate_risk_dag`.
+
+    ## Input
+
+    - **num_attackers**: The number of dice rolled by the attacker (default: 3)
+    - **num_defenders**: The number of dice rolled by the defender (default: 2)
+    - **num_attackers**: The number of armies that take part in the battle (default: 2)
+
+    ## Output
+
+    A dataframe with dice rolls, scores for participating armies and the loss outcome.
+    &#34;&#34;&#34;
+    if min(attackers, defenders) &lt; battle_size:
+        raise ValueError(
+            f&#34;We demand min(num_attackers={attackers}, num_defenders={defenders}) &gt;= battle_size={battle_size}.&#34;)
+    attack_names = [f&#34;a{i}&#34; for i in range(1, attackers + 1)]
+    defend_names = [f&#34;d{i}&#34; for i in range(1, defenders + 1)]
+    combinations = it.product(*[range(1, 6+1) for i in range(attackers + defenders)])
+    df = pd.DataFrame(combinations, columns=attack_names + defend_names)
+    for side in [&#39;a&#39;, &#39;d&#39;]:
+        for b in range(1, battle_size + 1):
+            names = attack_names if side == &#39;a&#39; else defend_names
+            df[f&#39;best_{side}{b}&#39;] = np.sort(df[names].values)[:, -b]
+
+    best_attackers = df[[c for c in df.columns if &#39;best&#39; in c and &#39;a&#39; in c]].values
+    best_defenders = df[[c for c in df.columns if &#39;best&#39; in c and &#39;d&#39; in c]].values
+
+    df[&#39;losses&#39;] = (best_attackers &gt; best_defenders).sum(axis=1)
+    return df</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="brent.datasets.alarm_dataset"><code class="name flex">
+<span>def <span class="ident">alarm_dataset</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This function reads in the alarm dataset which has historically been
+used to describe alarms for monitoring stations for anesthesia.
+It is a dataset that has orignally also been featured in the <code>bnlearn</code> package.
+It is simulated data but has been used historically in benchmarks.</p>
+<p>The original description to the dataset can be found here:
+<a href="http://www.bnlearn.com/bnrepository/discrete-medium.html#alarm">http://www.bnlearn.com/bnrepository/discrete-medium.html#alarm</a></p>
+<h2 id="reference">Reference:</h2>
+<p>I. A. Beinlich, H. J. Suermondt, R. M. Chavez, and G. F. Cooper.
+The ALARM Monitoring System: A Case Study with Two Probabilistic Inference
+Techniques for Belief Networks. In Proceedings of the 2nd European Conference
+on Artificial Intelligence in Medicine, pages 247-256. Springer-Verlag, 1989.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def alarm_dataset():
+    &#34;&#34;&#34;
+    This function reads in the alarm dataset which has historically been
+    used to describe alarms for monitoring stations for anesthesia.
+    It is a dataset that has orignally also been featured in the `bnlearn` package.
+    It is simulated data but has been used historically in benchmarks.
+
+    The original description to the dataset can be found here:
+    http://www.bnlearn.com/bnrepository/discrete-medium.html#alarm
+
+    ## Reference:
+    I. A. Beinlich, H. J. Suermondt, R. M. Chavez, and G. F. Cooper.
+    The ALARM Monitoring System: A Case Study with Two Probabilistic Inference
+    Techniques for Belief Networks. In Proceedings of the 2nd European Conference
+    on Artificial Intelligence in Medicine, pages 247-256. Springer-Verlag, 1989.
+    &#34;&#34;&#34;
+    return pd.read_csv(&#34;http://www.ccd.pitt.edu/wiki/images/ALARM10k.csv&#34;)</code></pre>
+</details>
+</dd>
+<dt id="brent.datasets.asian_cancer_dataset"><code class="name flex">
+<span>def <span class="ident">asian_cancer_dataset</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This function reads in the asian cancer dataset. It is a dataset
+that has orignally also been featured in the <code>bnlearn</code> package. It
+is simulated data but has been used historically in benchmarks.</p>
+<p>The original description to the dataset can be found here:
+<a href="http://www.bnlearn.com/bnrepository/discrete-small.html#cancer">http://www.bnlearn.com/bnrepository/discrete-small.html#cancer</a></p>
+<h2 id="reference">Reference</h2>
+<p>S. Lauritzen, D. Spiegelhalter. Local Computation with Probabilities on
+Graphical Structures and their Application to Expert Systems (with discussion).
+Journal of the Royal Statistical Society: Series B (Statistical Methodology),
+50(2):157-224, 1988.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def asian_cancer_dataset():
+    &#34;&#34;&#34;
+    This function reads in the asian cancer dataset. It is a dataset
+    that has orignally also been featured in the `bnlearn` package. It
+    is simulated data but has been used historically in benchmarks.
+
+    The original description to the dataset can be found here:
+    http://www.bnlearn.com/bnrepository/discrete-small.html#cancer
+
+    ## Reference
+
+    S. Lauritzen, D. Spiegelhalter. Local Computation with Probabilities on
+    Graphical Structures and their Application to Expert Systems (with discussion).
+    Journal of the Royal Statistical Society: Series B (Statistical Methodology),
+    50(2):157-224, 1988.
+    &#34;&#34;&#34;
+    return pd.read_csv(&#34;http://www.ccd.pitt.edu/wiki/images/ASIA10k.csv&#34;)</code></pre>
+</details>
+</dd>
+<dt id="brent.datasets.blue_baby_dataset"><code class="name flex">
+<span>def <span class="ident">blue_baby_dataset</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This function reads in the blue baby dataset. It involves a
+network for diagnosing congenital heart disease in a new born "blue baby".
+It is a dataset that has orignally also been featured in the <code>bnlearn</code> package.
+It is simulated data but has been used historically in benchmarks.</p>
+<p>The original description to the dataset can be found here:
+<a href="http://www.bnlearn.com/bnrepository/discrete-medium.html#child">http://www.bnlearn.com/bnrepository/discrete-medium.html#child</a></p>
+<h2 id="reference">Reference</h2>
+<p>D. J. Spiegelhalter, R. G. Coewll (1992). Learning in probabilistic expert systems.
+In Bayesian Statistics 4 (J. M. Bernardo, J. 0. Berger, A. P. Dawid and A. F. M.
+Smith, eds.) 447-466. Clarendon Press, Oxford.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def blue_baby_dataset():
+    &#34;&#34;&#34;
+    This function reads in the blue baby dataset. It involves a
+    network for diagnosing congenital heart disease in a new born &#34;blue baby&#34;.
+    It is a dataset that has orignally also been featured in the `bnlearn` package.
+    It is simulated data but has been used historically in benchmarks.
+
+    The original description to the dataset can be found here:
+    http://www.bnlearn.com/bnrepository/discrete-medium.html#child
+
+    ## Reference
+    D. J. Spiegelhalter, R. G. Coewll (1992). Learning in probabilistic expert systems.
+    In Bayesian Statistics 4 (J. M. Bernardo, J. 0. Berger, A. P. Dawid and A. F. M.
+    Smith, eds.) 447-466. Clarendon Press, Oxford.
+    &#34;&#34;&#34;
+    return pd.read_csv(&#34;http://www.ccd.pitt.edu/wiki/images/CHILD10k.csv&#34;)</code></pre>
+</details>
+</dd>
+<dt id="brent.datasets.earthquake_dataset"><code class="name flex">
+<span>def <span class="ident">earthquake_dataset</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def earthquake_dataset():
+    raise NotImplementedError(&#34;not yet implemented&#34;)</code></pre>
+</details>
+</dd>
+<dt id="brent.datasets.generate_risk_dataset"><code class="name flex">
+<span>def <span class="ident">generate_risk_dataset</span></span>(<span>attackers=3, defenders=2, battle_size=2)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This dataset generalises a scenario in the RISK board game. In this game
+typically three armies attack and two defend. The highest scoring attacker
+(based on a dice roll) is matched with the highest scoring defender, the second
+highest attacker goes with the second highest defender and so on. The defending
+party has the advantage so the attacker needs to roll higher than the defender
+in order to win. The <code>losses</code> column in the dataframe corresponds to the losses
+that the attacker incurs after the battle.</p>
+<p>This dataset is used in the corresponding <a title="brent.examples.generate_risk_dag" href="examples.html#brent.examples.generate_risk_dag"><code>generate_risk_dag()</code></a>.</p>
+<h2 id="input">Input</h2>
+<ul>
+<li><strong>num_attackers</strong>: The number of dice rolled by the attacker (default: 3)</li>
+<li><strong>num_defenders</strong>: The number of dice rolled by the defender (default: 2)</li>
+<li><strong>num_attackers</strong>: The number of armies that take part in the battle (default: 2)</li>
+</ul>
+<h2 id="output">Output</h2>
+<p>A dataframe with dice rolls, scores for participating armies and the loss outcome.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def generate_risk_dataset(attackers=3, defenders=2, battle_size=2):
+    &#34;&#34;&#34;
+    This dataset generalises a scenario in the RISK board game. In this game
+    typically three armies attack and two defend. The highest scoring attacker
+    (based on a dice roll) is matched with the highest scoring defender, the second
+    highest attacker goes with the second highest defender and so on. The defending
+    party has the advantage so the attacker needs to roll higher than the defender
+    in order to win. The `losses` column in the dataframe corresponds to the losses
+    that the attacker incurs after the battle.
+
+    This dataset is used in the corresponding `brent.examples.generate_risk_dag`.
+
+    ## Input
+
+    - **num_attackers**: The number of dice rolled by the attacker (default: 3)
+    - **num_defenders**: The number of dice rolled by the defender (default: 2)
+    - **num_attackers**: The number of armies that take part in the battle (default: 2)
+
+    ## Output
+
+    A dataframe with dice rolls, scores for participating armies and the loss outcome.
+    &#34;&#34;&#34;
+    if min(attackers, defenders) &lt; battle_size:
+        raise ValueError(
+            f&#34;We demand min(num_attackers={attackers}, num_defenders={defenders}) &gt;= battle_size={battle_size}.&#34;)
+    attack_names = [f&#34;a{i}&#34; for i in range(1, attackers + 1)]
+    defend_names = [f&#34;d{i}&#34; for i in range(1, defenders + 1)]
+    combinations = it.product(*[range(1, 6+1) for i in range(attackers + defenders)])
+    df = pd.DataFrame(combinations, columns=attack_names + defend_names)
+    for side in [&#39;a&#39;, &#39;d&#39;]:
+        for b in range(1, battle_size + 1):
+            names = attack_names if side == &#39;a&#39; else defend_names
+            df[f&#39;best_{side}{b}&#39;] = np.sort(df[names].values)[:, -b]
+
+    best_attackers = df[[c for c in df.columns if &#39;best&#39; in c and &#39;a&#39; in c]].values
+    best_defenders = df[[c for c in df.columns if &#39;best&#39; in c and &#39;d&#39; in c]].values
+
+    df[&#39;losses&#39;] = (best_attackers &gt; best_defenders).sum(axis=1)
+    return df</code></pre>
+</details>
+</dd>
+<dt id="brent.datasets.simple_sickness"><code class="name flex">
+<span>def <span class="ident">simple_sickness</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Inspiration of the data: <a href="https://www.cdc.gov/flu/about/qa/coldflu.htm.">https://www.cdc.gov/flu/about/qa/coldflu.htm.</a>
+cold
+flu
+none astma
+sneeze sure
+na
+sure
+bit
+cough
+bit
+yep
+sure
+yep
+weak
+sure
+yep
+na
+bit
+nose
+yep sure
+sure
+bit
+chills
+na
+yep
+na
+bit
+tired
+sure
+yes
+sure
+yep</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def simple_sickness():
+    &#34;&#34;&#34;
+    Inspiration of the data: https://www.cdc.gov/flu/about/qa/coldflu.htm.
+           cold  flu  none astma
+    sneeze sure   na  sure   bit
+    cough   bit  yep  sure   yep
+    weak   sure  yep    na   bit
+    nose    yep sure  sure   bit
+    chills   na  yep    na   bit
+    tired  sure  yes  sure   yep
+    &#34;&#34;&#34;
+    raise NotImplementedError(&#34;not yet implemented&#34;)</code></pre>
+</details>
+</dd>
+<dt id="brent.datasets.simple_study_dataset"><code class="name flex">
+<span>def <span class="ident">simple_study_dataset</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Creates a simple dataset that simulates the probability of passing
+a course given if the test for the course was hard and weather or
+not a student studied. This is a fake dataset.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def simple_study_dataset():
+    &#34;&#34;&#34;
+    Creates a simple dataset that simulates the probability of passing
+    a course given if the test for the course was hard and weather or
+    not a student studied. This is a fake dataset.
+    &#34;&#34;&#34;
+    grade = [&#34;good&#34;, &#34;pass&#34;, &#34;fail&#34;]
+    study = [&#34;lots&#34;, &#34;little&#34;, &#34;no&#34;]
+    hard = [&#34;yes&#34;, &#34;no&#34;]
+    probs = [0.6, 0.3, 0.1,
+             0.9, 0.09, 0.01,
+             0.3, 0.3, 0.4,
+             0.6, 0.2, 0.2,
+             0.1, 0.3, 0.6,
+             0.1, 0.5, 0.4]
+    zipprod = zip(it.product(study, hard, grade), probs)
+    tween = reduce(lambda a, b: a + b, [[c] * int(p * 100) for c, p in zipprod])
+    return pd.DataFrame(tween, columns=[&#34;study&#34;, &#34;hard&#34;, &#34;grade&#34;])</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="brent" href="index.html">brent</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="brent.datasets.alarm_dataset" href="#brent.datasets.alarm_dataset">alarm_dataset</a></code></li>
+<li><code><a title="brent.datasets.asian_cancer_dataset" href="#brent.datasets.asian_cancer_dataset">asian_cancer_dataset</a></code></li>
+<li><code><a title="brent.datasets.blue_baby_dataset" href="#brent.datasets.blue_baby_dataset">blue_baby_dataset</a></code></li>
+<li><code><a title="brent.datasets.earthquake_dataset" href="#brent.datasets.earthquake_dataset">earthquake_dataset</a></code></li>
+<li><code><a title="brent.datasets.generate_risk_dataset" href="#brent.datasets.generate_risk_dataset">generate_risk_dataset</a></code></li>
+<li><code><a title="brent.datasets.simple_sickness" href="#brent.datasets.simple_sickness">simple_sickness</a></code></li>
+<li><code><a title="brent.datasets.simple_study_dataset" href="#brent.datasets.simple_study_dataset">simple_study_dataset</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

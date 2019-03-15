@@ -83,7 +83,7 @@ After cloning you may install `brent` in the virtual
 environment via:
 
 ```bash
-$ pip install --editable .
+$ pip install -e ".[dev]"
 ```
 
 You can generate documentation locally by running: 
