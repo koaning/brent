@@ -178,7 +178,19 @@ class Query:
 
 
 class SupposeQuery:
+    """
+    A `SupposeQuery` can be used to ask the question "suppose we saw this"
+    what would have happened if we did or saw something else?
+    """
     def __init__(self, dag, when=None, suppose_do=None, suppose_given=None):
+        """
+        ## Inputs:
+
+        - **dag**: the `DAG` object to base the query on
+        - **when**: the observations we saw "before"
+        - **suppose_do**: the things we might enforce "in hindsight"
+        - **suppose_given**: the things we might witness "in hindsight"
+        """
         self.dag = dag
         self.orig_query = when
         if not suppose_do:
@@ -214,17 +226,42 @@ class SupposeQuery:
         return infer_dag
 
     def when(self, query):
+        """
+        With `when` you can specify what was observed.
+
+        ## Inputs
+
+        - **query**: query of what was observed before.
+        """
         if self.orig_query is not None:
             raise ValueError("SupposeQuery already has a `.when` value assigned.")
         return SupposeQuery(dag=self.dag, when=query, suppose_do=self.suppose_do_dict,
                             suppose_given=self.suppose_given_dict)
 
     def suppose_do(self, **kwargs):
+        """
+        With `suppose_do` you can specify the "what if" part after seeing
+        the facts seen before in the `when` statement. Note that these "what if"
+        scenarios are enforced, not given.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        """
         self._check_query_input(**kwargs)
         return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do={**self.suppose_do_dict, **kwargs},
                             suppose_given=self.suppose_given_dict)
 
     def suppose_given(self, **kwargs):
+        """
+        With `suppose_do` you can specify the "what if" part after seeing
+        the facts seen before in the `when` statement. Note that these "what if"
+        scenarios are given, not enforced.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        """
         self._check_query_input(**kwargs)
         return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do=self.suppose_do_dict,
                             suppose_given={**self.suppose_given_dict, **kwargs})

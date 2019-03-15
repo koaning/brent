@@ -43,7 +43,6 @@ def test_value_error_inference_no_when(simple_dag):
 
 
 def test_empty_when_equals_query(simple_dag):
-    # TODO: this is a test that needs to be adressed!
     q1 = Query(dag=simple_dag)
     q2 = Query(dag=simple_dag).given(b=1)
     s = SupposeQuery(dag=simple_dag).when(q1).suppose_given(b=1)
