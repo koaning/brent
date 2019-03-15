@@ -77,9 +77,11 @@ class DAG:
         self.graph = nx.DiGraph()
         for node in self.df.columns:
             self.graph.add_node(node)
+        self.cached = False
+        self.prob_tables = {}
 
     @property
-    def undirected(self):
+    def undirected_graph(self):
         &#34;&#34;&#34;
         Fetch the `undirected` variant of the NetworkX graph. This can be
         useful when trying to determine all paths between two nodes.
@@ -122,7 +124,7 @@ class DAG:
     def copy(self):
         &#34;&#34;&#34;Returns a copy of the current DAG.&#34;&#34;&#34;
         new_dag = DAG(self.df)
-        new_dag.graph = self.graph
+        new_dag.graph = self.graph.copy()
         return new_dag
 
     def edge_direction(self, node_a, node_b):
@@ -139,9 +141,13 @@ class DAG:
         These paths do not take the direction into account and will turn the
         directed graph into an undirected one.
         &#34;&#34;&#34;
-        return list(nx.all_simple_paths(self.undirected, node_a, node_b))
+        return list(nx.all_simple_paths(self.undirected_graph, node_a, node_b))
 
     def directed_paths(self, node_a, node_b):
+        &#34;&#34;&#34;
+        Find all paths between node_a and node_b. These paths may be be
+        probalistically inactive. If you want the active paths call `DAG.active_paths` instead.
+        &#34;&#34;&#34;
         output_paths = []
         for path in self.undirected_paths(node_a, node_b):
             windowed = list(window(path))
@@ -171,6 +177,19 @@ class DAG:
                 active_paths.append(z_path)
         return active_paths
 
+    def cache(self):
+        &#34;&#34;&#34;
+        When calling `.cache()` the API will realise that the graph will no longer change.
+        We will also cache all the probability tables that are associated with a node.
+        :return:
+        &#34;&#34;&#34;
+        if self.cached:
+            raise ValueError(&#34;cannot call `.cache()` on a DAG that is already cached!&#34;)
+        for node in self.nodes:
+            self.prob_tables[node] = self.calc_node_table(node)
+        self.cached = True
+        return self
+
     def calc_node_table(self, name):
         &#34;&#34;&#34;
         Calculates probability table for a given node.
@@ -182,6 +201,10 @@ class DAG:
 
         - **name**: Name of a node/variable in the graph
         &#34;&#34;&#34;
+        if name not in self.nodes:
+            raise ValueError(f&#34;node {name} not in available nodes: {self.nodes}&#34;)
+        if name in self.prob_tables:
+            return self.prob_tables[name]
         parents = self.parents(name)
         tbl = self.df.copy()
         logging.debug(f&#34;creating node table node={name} parents={parents}&#34;)
@@ -264,6 +287,8 @@ class DAG:
             raise ValueError(f&#34;cause {source} not in dataframe&#34;)
         if sink not in self.df.columns:
             raise ValueError(f&#34;effect {sink} not in dataframe&#34;)
+        if self.cached:
+            raise RuntimeError(&#34;Cannot change a graph when the dag is baked.&#34;)
         new_graph = self.graph.copy()
         new_graph.add_edge(source, sink)
         if not nx.is_directed_acyclic_graph(new_graph):
@@ -434,9 +459,11 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
         self.graph = nx.DiGraph()
         for node in self.df.columns:
             self.graph.add_node(node)
+        self.cached = False
+        self.prob_tables = {}
 
     @property
-    def undirected(self):
+    def undirected_graph(self):
         &#34;&#34;&#34;
         Fetch the `undirected` variant of the NetworkX graph. This can be
         useful when trying to determine all paths between two nodes.
@@ -479,7 +506,7 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
     def copy(self):
         &#34;&#34;&#34;Returns a copy of the current DAG.&#34;&#34;&#34;
         new_dag = DAG(self.df)
-        new_dag.graph = self.graph
+        new_dag.graph = self.graph.copy()
         return new_dag
 
     def edge_direction(self, node_a, node_b):
@@ -496,9 +523,13 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
         These paths do not take the direction into account and will turn the
         directed graph into an undirected one.
         &#34;&#34;&#34;
-        return list(nx.all_simple_paths(self.undirected, node_a, node_b))
+        return list(nx.all_simple_paths(self.undirected_graph, node_a, node_b))
 
     def directed_paths(self, node_a, node_b):
+        &#34;&#34;&#34;
+        Find all paths between node_a and node_b. These paths may be be
+        probalistically inactive. If you want the active paths call `DAG.active_paths` instead.
+        &#34;&#34;&#34;
         output_paths = []
         for path in self.undirected_paths(node_a, node_b):
             windowed = list(window(path))
@@ -528,6 +559,19 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
                 active_paths.append(z_path)
         return active_paths
 
+    def cache(self):
+        &#34;&#34;&#34;
+        When calling `.cache()` the API will realise that the graph will no longer change.
+        We will also cache all the probability tables that are associated with a node.
+        :return:
+        &#34;&#34;&#34;
+        if self.cached:
+            raise ValueError(&#34;cannot call `.cache()` on a DAG that is already cached!&#34;)
+        for node in self.nodes:
+            self.prob_tables[node] = self.calc_node_table(node)
+        self.cached = True
+        return self
+
     def calc_node_table(self, name):
         &#34;&#34;&#34;
         Calculates probability table for a given node.
@@ -539,6 +583,10 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
 
         - **name**: Name of a node/variable in the graph
         &#34;&#34;&#34;
+        if name not in self.nodes:
+            raise ValueError(f&#34;node {name} not in available nodes: {self.nodes}&#34;)
+        if name in self.prob_tables:
+            return self.prob_tables[name]
         parents = self.parents(name)
         tbl = self.df.copy()
         logging.debug(f&#34;creating node table node={name} parents={parents}&#34;)
@@ -621,6 +669,8 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
             raise ValueError(f&#34;cause {source} not in dataframe&#34;)
         if sink not in self.df.columns:
             raise ValueError(f&#34;effect {sink} not in dataframe&#34;)
+        if self.cached:
+            raise RuntimeError(&#34;Cannot change a graph when the dag is baked.&#34;)
         new_graph = self.graph.copy()
         new_graph.add_edge(source, sink)
         if not nx.is_directed_acyclic_graph(new_graph):
@@ -789,14 +839,14 @@ def origin_nodes(self):
     return tuple(x for x in self.graph.nodes() if self.graph.in_degree(x) == 0)</code></pre>
 </details>
 </dd>
-<dt id="brent.graph.DAG.undirected"><code class="name">var <span class="ident">undirected</span></code></dt>
+<dt id="brent.graph.DAG.undirected_graph"><code class="name">var <span class="ident">undirected_graph</span></code></dt>
 <dd>
 <section class="desc"><p>Fetch the <code>undirected</code> variant of the NetworkX graph. This can be
 useful when trying to determine all paths between two nodes.</p></section>
 <details class="source">
 <summary>Source code</summary>
 <pre><code class="python">@property
-def undirected(self):
+def undirected_graph(self):
     &#34;&#34;&#34;
     Fetch the `undirected` variant of the NetworkX graph. This can be
     useful when trying to determine all paths between two nodes.
@@ -846,7 +896,9 @@ dag = DAG(df).add_edge(&quot;a&quot;, &quot;b&quot;).add_edge(&quot;b&quot;, &qu
     self.df = dataframe
     self.graph = nx.DiGraph()
     for node in self.df.columns:
-        self.graph.add_node(node)</code></pre>
+        self.graph.add_node(node)
+    self.cached = False
+    self.prob_tables = {}</code></pre>
 </details>
 </dd>
 <dt id="brent.graph.DAG.active_paths"><code class="name flex">
@@ -924,12 +976,37 @@ from brent.common import make_fake_df
         raise ValueError(f&#34;cause {source} not in dataframe&#34;)
     if sink not in self.df.columns:
         raise ValueError(f&#34;effect {sink} not in dataframe&#34;)
+    if self.cached:
+        raise RuntimeError(&#34;Cannot change a graph when the dag is baked.&#34;)
     new_graph = self.graph.copy()
     new_graph.add_edge(source, sink)
     if not nx.is_directed_acyclic_graph(new_graph):
         raise ValueError(f&#34;edge {source} -&gt; {sink} causes DAG to get cycle&#34;)
     self.graph.add_edge(source, sink)
     logging.debug(f&#34;created connection {source} -&gt; {sink}&#34;)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="brent.graph.DAG.cache"><code class="name flex">
+<span>def <span class="ident">cache</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>When calling <code>.cache()</code> the API will realise that the graph will no longer change.
+We will also cache all the probability tables that are associated with a node.
+:return:</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def cache(self):
+    &#34;&#34;&#34;
+    When calling `.cache()` the API will realise that the graph will no longer change.
+    We will also cache all the probability tables that are associated with a node.
+    :return:
+    &#34;&#34;&#34;
+    if self.cached:
+        raise ValueError(&#34;cannot call `.cache()` on a DAG that is already cached!&#34;)
+    for node in self.nodes:
+        self.prob_tables[node] = self.calc_node_table(node)
+    self.cached = True
     return self</code></pre>
 </details>
 </dd>
@@ -957,6 +1034,10 @@ call will calculate <code>P(B|A)</code> in the <code>probs</code> column of the 
 
     - **name**: Name of a node/variable in the graph
     &#34;&#34;&#34;
+    if name not in self.nodes:
+        raise ValueError(f&#34;node {name} not in available nodes: {self.nodes}&#34;)
+    if name in self.prob_tables:
+        return self.prob_tables[name]
     parents = self.parents(name)
     tbl = self.df.copy()
     logging.debug(f&#34;creating node table node={name} parents={parents}&#34;)
@@ -1087,7 +1168,7 @@ dag.children(&quot;c&quot;) #outputs [&quot;b&quot;,&quot;d&quot;]
 <pre><code class="python">def copy(self):
     &#34;&#34;&#34;Returns a copy of the current DAG.&#34;&#34;&#34;
     new_dag = DAG(self.df)
-    new_dag.graph = self.graph
+    new_dag.graph = self.graph.copy()
     return new_dag</code></pre>
 </details>
 </dd>
@@ -1095,10 +1176,15 @@ dag.children(&quot;c&quot;) #outputs [&quot;b&quot;,&quot;d&quot;]
 <span>def <span class="ident">directed_paths</span></span>(<span>self, node_a, node_b)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Find all paths between node_a and node_b. These paths may be be
+probalistically inactive. If you want the active paths call <a title="brent.graph.DAG.active_paths" href="#brent.graph.DAG.active_paths"><code>DAG.active_paths()</code></a> instead.</p></section>
 <details class="source">
 <summary>Source code</summary>
 <pre><code class="python">def directed_paths(self, node_a, node_b):
+    &#34;&#34;&#34;
+    Find all paths between node_a and node_b. These paths may be be
+    probalistically inactive. If you want the active paths call `DAG.active_paths` instead.
+    &#34;&#34;&#34;
     output_paths = []
     for path in self.undirected_paths(node_a, node_b):
         windowed = list(window(path))
@@ -1299,7 +1385,7 @@ directed graph into an undirected one.</p></section>
     These paths do not take the direction into account and will turn the
     directed graph into an undirected one.
     &#34;&#34;&#34;
-    return list(nx.all_simple_paths(self.undirected, node_a, node_b))</code></pre>
+    return list(nx.all_simple_paths(self.undirected_graph, node_a, node_b))</code></pre>
 </details>
 </dd>
 </dl>
@@ -1326,6 +1412,7 @@ directed graph into an undirected one.</p></section>
 <li><code><a title="brent.graph.DAG.__init__" href="#brent.graph.DAG.__init__">__init__</a></code></li>
 <li><code><a title="brent.graph.DAG.active_paths" href="#brent.graph.DAG.active_paths">active_paths</a></code></li>
 <li><code><a title="brent.graph.DAG.add_edge" href="#brent.graph.DAG.add_edge">add_edge</a></code></li>
+<li><code><a title="brent.graph.DAG.cache" href="#brent.graph.DAG.cache">cache</a></code></li>
 <li><code><a title="brent.graph.DAG.calc_node_table" href="#brent.graph.DAG.calc_node_table">calc_node_table</a></code></li>
 <li><code><a title="brent.graph.DAG.children" href="#brent.graph.DAG.children">children</a></code></li>
 <li><code><a title="brent.graph.DAG.connections" href="#brent.graph.DAG.connections">connections</a></code></li>
@@ -1341,7 +1428,7 @@ directed graph into an undirected one.</p></section>
 <li><code><a title="brent.graph.DAG.origin_nodes" href="#brent.graph.DAG.origin_nodes">origin_nodes</a></code></li>
 <li><code><a title="brent.graph.DAG.parents" href="#brent.graph.DAG.parents">parents</a></code></li>
 <li><code><a title="brent.graph.DAG.plot" href="#brent.graph.DAG.plot">plot</a></code></li>
-<li><code><a title="brent.graph.DAG.undirected" href="#brent.graph.DAG.undirected">undirected</a></code></li>
+<li><code><a title="brent.graph.DAG.undirected_graph" href="#brent.graph.DAG.undirected_graph">undirected_graph</a></code></li>
 <li><code><a title="brent.graph.DAG.undirected_paths" href="#brent.graph.DAG.undirected_paths">undirected_paths</a></code></li>
 </ul>
 </li>
