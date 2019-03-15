@@ -99,5 +99,5 @@ q.infer(give_table=True)
 
 """
 
-from .query import Query
+from .query import Query, SupposeQuery
 from .graph import DAG

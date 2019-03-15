@@ -49,9 +49,11 @@ class DAG:
         self.graph = nx.DiGraph()
         for node in self.df.columns:
             self.graph.add_node(node)
+        self.cached = False
+        self.prob_tables = {}
 
     @property
-    def undirected(self):
+    def undirected_graph(self):
         """
         Fetch the `undirected` variant of the NetworkX graph. This can be
         useful when trying to determine all paths between two nodes.
@@ -94,7 +96,7 @@ class DAG:
     def copy(self):
         """Returns a copy of the current DAG."""
         new_dag = DAG(self.df)
-        new_dag.graph = self.graph
+        new_dag.graph = self.graph.copy()
         return new_dag
 
     def edge_direction(self, node_a, node_b):
@@ -111,9 +113,13 @@ class DAG:
         These paths do not take the direction into account and will turn the
         directed graph into an undirected one.
         """
-        return list(nx.all_simple_paths(self.undirected, node_a, node_b))
+        return list(nx.all_simple_paths(self.undirected_graph, node_a, node_b))
 
     def directed_paths(self, node_a, node_b):
+        """
+        Find all paths between node_a and node_b. These paths may be be
+        probalistically inactive. If you want the active paths call `DAG.active_paths` instead.
+        """
         output_paths = []
         for path in self.undirected_paths(node_a, node_b):
             windowed = list(window(path))
@@ -143,6 +149,19 @@ class DAG:
                 active_paths.append(z_path)
         return active_paths
 
+    def cache(self):
+        """
+        When calling `.cache()` the API will realise that the graph will no longer change.
+        We will also cache all the probability tables that are associated with a node.
+        :return:
+        """
+        if self.cached:
+            raise ValueError("cannot call `.cache()` on a DAG that is already cached!")
+        for node in self.nodes:
+            self.prob_tables[node] = self.calc_node_table(node)
+        self.cached = True
+        return self
+
     def calc_node_table(self, name):
         """
         Calculates probability table for a given node.
@@ -154,6 +173,10 @@ class DAG:
 
         - **name**: Name of a node/variable in the graph
         """
+        if name not in self.nodes:
+            raise ValueError(f"node {name} not in available nodes: {self.nodes}")
+        if name in self.prob_tables:
+            return self.prob_tables[name]
         parents = self.parents(name)
         tbl = self.df.copy()
         logging.debug(f"creating node table node={name} parents={parents}")
@@ -236,6 +259,8 @@ class DAG:
             raise ValueError(f"cause {source} not in dataframe")
         if sink not in self.df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
+        if self.cached:
+            raise RuntimeError("Cannot change a graph when the dag is baked.")
         new_graph = self.graph.copy()
         new_graph.add_edge(source, sink)
         if not nx.is_directed_acyclic_graph(new_graph):
