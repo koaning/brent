@@ -44,7 +44,7 @@ from brent.common import normalise
 
 
 class Query:
-    def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
+    def __init__(self, dag: DAG, given=None, do=None):
         &#34;&#34;&#34;
         A Query object describes a query that will be run on a DAG object.
 
@@ -53,7 +53,6 @@ class Query:
         - **dag**: DAG object that contains all edges.
         - **given**: Dictionary of key-value pairs of given items.
         - **do**: Dictionary of key-value pairs of do operated items.
-        - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
 
         Example:
 
@@ -74,11 +73,8 @@ class Query:
             given = dict()
         if not do:
             do = dict()
-        if not counterfact:
-            counterfact = dict()
         self.given_dict = given
         self.do_dict = do
-        self.counterfact = counterfact
 
     def inference_dag(self):
         &#34;&#34;&#34;
@@ -114,7 +110,7 @@ class Query:
         - **kwargs**: key-value pairs of given items.
         &#34;&#34;&#34;
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)
 
     def do(self, **kwargs):
         &#34;&#34;&#34;
@@ -125,27 +121,16 @@ class Query:
         - **kwargs**: key-value pairs of do items.
         &#34;&#34;&#34;
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
 
-    def counterfact(self, **kwargs):
-        &#34;&#34;&#34;
-        Add items to the query that are observed but will be counterfacted.
-
-        ## Inputs
-
-        - **kwargs**: key-value pairs of observations to be counterfacted.
-        &#34;&#34;&#34;
-        self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})
-
-    def plot(self, emphesize_do=True):
+    def plot(self, emphesize_do=True, **kwargs):
         &#34;&#34;&#34;
         A pretty plotting function. Given nodes have double circles.
         Nodes with `do` operations on them will have in-going arcs grayed.
         &#34;&#34;&#34;
         givens = self.given_dict.keys()
         dos = self.do_dict.keys()
-        d = Digraph()
+        d = Digraph(**kwargs)
         d.attr(rankdir=&#39;LR&#39;)
         d.attr(&#39;node&#39;, shape=&#39;circle&#39;)
         for idx, n in enumerate(self.dag.graph.nodes):
@@ -159,24 +144,12 @@ class Query:
                 d.node(n)
         for n1, n2 in self.dag.graph.edges:
             if ((n1 in dos) or (n1 in givens)) and ((n2 in dos) or (n2 in givens)):
-                    d.edge(n1, n2, color=&#34;lightgray&#34;)
+                d.edge(n1, n2, color=&#34;lightgray&#34;)
             elif n2 in dos:
                 d.edge(n1, n2, color=&#34;lightgray&#34;, style=&#34;dashed&#34;)
             else:
                 d.edge(n1, n2)
         return d
-
-    def infer_counterfact(self):
-        &#34;&#34;&#34;
-        If counterfact is in the query we will need to return.
-
-        The counterfacted variable is first assumed to be &#34;given&#34;. We apply inference
-        on the entire graph as a first step. This gives us probabilities for all values.
-        This is the new graph definition.
-
-
-        &#34;&#34;&#34;
-        pass
 
     def infer(self, give_table=False):
         &#34;&#34;&#34;
@@ -233,7 +206,126 @@ class Query:
         &#34;&#34;&#34;
         table = self.infer(give_table=True)
         idx = np.random.choice(table.index, p=table.prob, replace=True, size=n_samples)
-        return table.loc[idx].reset_index(drop=True).drop(columns=[&#39;prob&#39;])</code></pre>
+        return table.loc[idx].reset_index(drop=True).drop(columns=[&#39;prob&#39;])
+
+
+class SupposeQuery:
+    &#34;&#34;&#34;
+    A `SupposeQuery` can be used to ask the question &#34;suppose we saw this&#34;
+    what would have happened if we did or saw something else?
+    &#34;&#34;&#34;
+    def __init__(self, dag, when=None, suppose_do=None, suppose_given=None):
+        &#34;&#34;&#34;
+        ## Inputs:
+
+        - **dag**: the `DAG` object to base the query on
+        - **when**: the observations we saw &#34;before&#34;
+        - **suppose_do**: the things we might enforce &#34;in hindsight&#34;
+        - **suppose_given**: the things we might witness &#34;in hindsight&#34;
+        &#34;&#34;&#34;
+        self.dag = dag
+        self.orig_query = when
+        if not suppose_do:
+            suppose_do = dict()
+        if not suppose_given:
+            suppose_given = dict()
+        self.suppose_do_dict = suppose_do
+        self.suppose_given_dict = suppose_given
+
+    def _check_query_input(self, **kwargs):
+        for key, value in kwargs.items():
+            logging.debug(f&#34;checking key {key}={value}&#34;)
+            if key not in self.dag.nodes:
+                raise ValueError(f&#34;node &#39;{key}&#39; does not exist in original dag&#34;)
+            if value not in self.dag.df[key].values:
+                raise ValueError(f&#34;value {value} does not occur for node {key}&#34;)
+            if key in {**self.suppose_do_dict, **self.suppose_given_dict}.keys():
+                raise ValueError(f&#34;{key} is already used in this query&#34;)
+
+    def inference_dag(self):
+        &#34;&#34;&#34;
+        This is a DAG created from the original but has been altered
+        to accomodate `do-calculus`.
+        &#34;&#34;&#34;
+        infer_dag = DAG(self.dag.df.copy())
+        logging.debug(f&#34;constructing copy of original DAG nodes: {infer_dag.nodes}&#34;)
+        for n1, n2 in self.dag.edges:
+            if n2 not in self.suppose_do_dict.keys():
+                infer_dag.add_edge(n1, n2)
+            else:
+                logging.debug(f&#34;edge {n1} -&gt; {n2} ignored because of do operator&#34;)
+        logging.debug(f&#34;original DAG copied&#34;)
+        return infer_dag
+
+    def when(self, query):
+        &#34;&#34;&#34;
+        With `when` you can specify what was observed.
+
+        ## Inputs
+
+        - **query**: query of what was observed before.
+        &#34;&#34;&#34;
+        if self.orig_query is not None:
+            raise ValueError(&#34;SupposeQuery already has a `.when` value assigned.&#34;)
+        return SupposeQuery(dag=self.dag, when=query, suppose_do=self.suppose_do_dict,
+                            suppose_given=self.suppose_given_dict)
+
+    def suppose_do(self, **kwargs):
+        &#34;&#34;&#34;
+        With `suppose_do` you can specify the &#34;what if&#34; part after seeing
+        the facts seen before in the `when` statement. Note that these &#34;what if&#34;
+        scenarios are enforced, not given.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do={**self.suppose_do_dict, **kwargs},
+                            suppose_given=self.suppose_given_dict)
+
+    def suppose_given(self, **kwargs):
+        &#34;&#34;&#34;
+        With `suppose_do` you can specify the &#34;what if&#34; part after seeing
+        the facts seen before in the `when` statement. Note that these &#34;what if&#34;
+        scenarios are given, not enforced.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do=self.suppose_do_dict,
+                            suppose_given={**self.suppose_given_dict, **kwargs})
+
+    def infer(self, give_table=False):
+        &#34;&#34;&#34;
+        Run the inference on the graph given the current query.
+
+        ## Inputs
+
+        - **give_table**: Instead of calculating marginal probabilities and
+        returning a dictionary, return a pandas table instead. Defaults to `False`.
+        &#34;&#34;&#34;
+        if self.orig_query is None:
+            raise ValueError(&#34;SupposeQuery needs a `when` parameter defined.&#34;)
+        dag_copy = self.dag.copy().cache()
+        orig_query_table = self.orig_query.infer(give_table=True)
+        names_to_omit = list(self.orig_query.given_dict.keys()) + list(self.orig_query.do_dict.keys())
+        names_to_join = [n for n in self.orig_query.dag.nodes if n not in names_to_omit]
+
+        for node in names_to_join:
+            associated_table = dag_copy.prob_tables[node]
+            colnames = list(associated_table.columns)
+            res = (orig_query_table[colnames]
+                   .groupby([_ for _ in colnames if _ != &#34;prob&#34;])
+                   .sum()[&#34;prob&#34;]
+                   .reset_index())
+            dag_copy.prob_tables[node] = res
+
+        new_query = Query(dag=dag_copy, given=self.suppose_given_dict, do=self.suppose_do_dict)
+
+        return new_query.infer(give_table=give_table)</code></pre>
 </details>
 </section>
 <section>
@@ -253,7 +345,7 @@ class Query:
 <details class="source">
 <summary>Source code</summary>
 <pre><code class="python">class Query:
-    def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
+    def __init__(self, dag: DAG, given=None, do=None):
         &#34;&#34;&#34;
         A Query object describes a query that will be run on a DAG object.
 
@@ -262,7 +354,6 @@ class Query:
         - **dag**: DAG object that contains all edges.
         - **given**: Dictionary of key-value pairs of given items.
         - **do**: Dictionary of key-value pairs of do operated items.
-        - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
 
         Example:
 
@@ -283,11 +374,8 @@ class Query:
             given = dict()
         if not do:
             do = dict()
-        if not counterfact:
-            counterfact = dict()
         self.given_dict = given
         self.do_dict = do
-        self.counterfact = counterfact
 
     def inference_dag(self):
         &#34;&#34;&#34;
@@ -323,7 +411,7 @@ class Query:
         - **kwargs**: key-value pairs of given items.
         &#34;&#34;&#34;
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)
+        return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)
 
     def do(self, **kwargs):
         &#34;&#34;&#34;
@@ -334,27 +422,16 @@ class Query:
         - **kwargs**: key-value pairs of do items.
         &#34;&#34;&#34;
         self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)
+        return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
 
-    def counterfact(self, **kwargs):
-        &#34;&#34;&#34;
-        Add items to the query that are observed but will be counterfacted.
-
-        ## Inputs
-
-        - **kwargs**: key-value pairs of observations to be counterfacted.
-        &#34;&#34;&#34;
-        self._check_query_input(**kwargs)
-        return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})
-
-    def plot(self, emphesize_do=True):
+    def plot(self, emphesize_do=True, **kwargs):
         &#34;&#34;&#34;
         A pretty plotting function. Given nodes have double circles.
         Nodes with `do` operations on them will have in-going arcs grayed.
         &#34;&#34;&#34;
         givens = self.given_dict.keys()
         dos = self.do_dict.keys()
-        d = Digraph()
+        d = Digraph(**kwargs)
         d.attr(rankdir=&#39;LR&#39;)
         d.attr(&#39;node&#39;, shape=&#39;circle&#39;)
         for idx, n in enumerate(self.dag.graph.nodes):
@@ -368,24 +445,12 @@ class Query:
                 d.node(n)
         for n1, n2 in self.dag.graph.edges:
             if ((n1 in dos) or (n1 in givens)) and ((n2 in dos) or (n2 in givens)):
-                    d.edge(n1, n2, color=&#34;lightgray&#34;)
+                d.edge(n1, n2, color=&#34;lightgray&#34;)
             elif n2 in dos:
                 d.edge(n1, n2, color=&#34;lightgray&#34;, style=&#34;dashed&#34;)
             else:
                 d.edge(n1, n2)
         return d
-
-    def infer_counterfact(self):
-        &#34;&#34;&#34;
-        If counterfact is in the query we will need to return.
-
-        The counterfacted variable is first assumed to be &#34;given&#34;. We apply inference
-        on the entire graph as a first step. This gives us probabilities for all values.
-        This is the new graph definition.
-
-
-        &#34;&#34;&#34;
-        pass
 
     def infer(self, give_table=False):
         &#34;&#34;&#34;
@@ -447,7 +512,7 @@ class Query:
 <h3>Methods</h3>
 <dl>
 <dt id="brent.query.Query.__init__"><code class="name flex">
-<span>def <span class="ident">__init__</span></span>(<span>self, dag, given=None, do=None, counterfact=None)</span>
+<span>def <span class="ident">__init__</span></span>(<span>self, dag, given=None, do=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>A Query object describes a query that will be run on a DAG object.</p>
@@ -456,7 +521,6 @@ class Query:
 <li><strong>dag</strong>: DAG object that contains all edges.</li>
 <li><strong>given</strong>: Dictionary of key-value pairs of given items.</li>
 <li><strong>do</strong>: Dictionary of key-value pairs of do operated items.</li>
-<li><strong>counterfact</strong>: Dictionary of key-value pairs of counterfact operated items.</li>
 </ul>
 <p>Example:</p>
 <pre><code>from brent import DAG, Query
@@ -471,7 +535,7 @@ q2 = Query(given={'a':1}, do={'d':1})
 </code></pre></section>
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">def __init__(self, dag: DAG, given=None, do=None, counterfact=None):
+<pre><code class="python">def __init__(self, dag: DAG, given=None, do=None):
     &#34;&#34;&#34;
     A Query object describes a query that will be run on a DAG object.
 
@@ -480,7 +544,6 @@ q2 = Query(given={'a':1}, do={'d':1})
     - **dag**: DAG object that contains all edges.
     - **given**: Dictionary of key-value pairs of given items.
     - **do**: Dictionary of key-value pairs of do operated items.
-    - **counterfact**: Dictionary of key-value pairs of counterfact operated items.
 
     Example:
 
@@ -501,34 +564,8 @@ q2 = Query(given={'a':1}, do={'d':1})
         given = dict()
     if not do:
         do = dict()
-    if not counterfact:
-        counterfact = dict()
     self.given_dict = given
-    self.do_dict = do
-    self.counterfact = counterfact</code></pre>
-</details>
-</dd>
-<dt id="brent.query.Query.counterfact"><code class="name flex">
-<span>def <span class="ident">counterfact</span></span>(<span>self, **kwargs)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Add items to the query that are observed but will be counterfacted.</p>
-<h2 id="inputs">Inputs</h2>
-<ul>
-<li><strong>kwargs</strong>: key-value pairs of observations to be counterfacted.</li>
-</ul></section>
-<details class="source">
-<summary>Source code</summary>
-<pre><code class="python">def counterfact(self, **kwargs):
-    &#34;&#34;&#34;
-    Add items to the query that are observed but will be counterfacted.
-
-    ## Inputs
-
-    - **kwargs**: key-value pairs of observations to be counterfacted.
-    &#34;&#34;&#34;
-    self._check_query_input(**kwargs)
-    return Query(dag=self.dag, given=self.given_dict, do=self.do_dict, counterfact={**self.counterfact, **kwargs})</code></pre>
+    self.do_dict = do</code></pre>
 </details>
 </dd>
 <dt id="brent.query.Query.do"><code class="name flex">
@@ -551,7 +588,7 @@ q2 = Query(given={'a':1}, do={'d':1})
     - **kwargs**: key-value pairs of do items.
     &#34;&#34;&#34;
     self._check_query_input(**kwargs)
-    return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs}, counterfact=self.counterfact)</code></pre>
+    return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})</code></pre>
 </details>
 </dd>
 <dt id="brent.query.Query.given"><code class="name flex">
@@ -574,7 +611,7 @@ q2 = Query(given={'a':1}, do={'d':1})
     - **kwargs**: key-value pairs of given items.
     &#34;&#34;&#34;
     self._check_query_input(**kwargs)
-    return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict, counterfact=self.counterfact)</code></pre>
+    return Query(dag=self.dag, given={**self.given_dict, **kwargs}, do=self.do_dict)</code></pre>
 </details>
 </dd>
 <dt id="brent.query.Query.infer"><code class="name flex">
@@ -616,29 +653,6 @@ returning a dictionary, return a pandas table instead. Defaults to <code>False</
     return output</code></pre>
 </details>
 </dd>
-<dt id="brent.query.Query.infer_counterfact"><code class="name flex">
-<span>def <span class="ident">infer_counterfact</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>If counterfact is in the query we will need to return.</p>
-<p>The counterfacted variable is first assumed to be "given". We apply inference
-on the entire graph as a first step. This gives us probabilities for all values.
-This is the new graph definition.</p></section>
-<details class="source">
-<summary>Source code</summary>
-<pre><code class="python">def infer_counterfact(self):
-    &#34;&#34;&#34;
-    If counterfact is in the query we will need to return.
-
-    The counterfacted variable is first assumed to be &#34;given&#34;. We apply inference
-    on the entire graph as a first step. This gives us probabilities for all values.
-    This is the new graph definition.
-
-
-    &#34;&#34;&#34;
-    pass</code></pre>
-</details>
-</dd>
 <dt id="brent.query.Query.inference_dag"><code class="name flex">
 <span>def <span class="ident">inference_dag</span></span>(<span>self)</span>
 </code></dt>
@@ -664,21 +678,21 @@ to accomodate <code>do-calculus</code>.</p></section>
 </details>
 </dd>
 <dt id="brent.query.Query.plot"><code class="name flex">
-<span>def <span class="ident">plot</span></span>(<span>self, emphesize_do=True)</span>
+<span>def <span class="ident">plot</span></span>(<span>self, emphesize_do=True, **kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>A pretty plotting function. Given nodes have double circles.
 Nodes with <code>do</code> operations on them will have in-going arcs grayed.</p></section>
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">def plot(self, emphesize_do=True):
+<pre><code class="python">def plot(self, emphesize_do=True, **kwargs):
     &#34;&#34;&#34;
     A pretty plotting function. Given nodes have double circles.
     Nodes with `do` operations on them will have in-going arcs grayed.
     &#34;&#34;&#34;
     givens = self.given_dict.keys()
     dos = self.do_dict.keys()
-    d = Digraph()
+    d = Digraph(**kwargs)
     d.attr(rankdir=&#39;LR&#39;)
     d.attr(&#39;node&#39;, shape=&#39;circle&#39;)
     for idx, n in enumerate(self.dag.graph.nodes):
@@ -692,7 +706,7 @@ Nodes with <code>do</code> operations on them will have in-going arcs grayed.</p
             d.node(n)
     for n1, n2 in self.dag.graph.edges:
         if ((n1 in dos) or (n1 in givens)) and ((n2 in dos) or (n2 in givens)):
-                d.edge(n1, n2, color=&#34;lightgray&#34;)
+            d.edge(n1, n2, color=&#34;lightgray&#34;)
         elif n2 in dos:
             d.edge(n1, n2, color=&#34;lightgray&#34;, style=&#34;dashed&#34;)
         else:
@@ -758,6 +772,315 @@ q1.sample(100)
 </dd>
 </dl>
 </dd>
+<dt id="brent.query.SupposeQuery"><code class="flex name class">
+<span>class <span class="ident">SupposeQuery</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>A <a title="brent.query.SupposeQuery" href="#brent.query.SupposeQuery"><code>SupposeQuery</code></a> can be used to ask the question "suppose we saw this"
+what would have happened if we did or saw something else?</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class SupposeQuery:
+    &#34;&#34;&#34;
+    A `SupposeQuery` can be used to ask the question &#34;suppose we saw this&#34;
+    what would have happened if we did or saw something else?
+    &#34;&#34;&#34;
+    def __init__(self, dag, when=None, suppose_do=None, suppose_given=None):
+        &#34;&#34;&#34;
+        ## Inputs:
+
+        - **dag**: the `DAG` object to base the query on
+        - **when**: the observations we saw &#34;before&#34;
+        - **suppose_do**: the things we might enforce &#34;in hindsight&#34;
+        - **suppose_given**: the things we might witness &#34;in hindsight&#34;
+        &#34;&#34;&#34;
+        self.dag = dag
+        self.orig_query = when
+        if not suppose_do:
+            suppose_do = dict()
+        if not suppose_given:
+            suppose_given = dict()
+        self.suppose_do_dict = suppose_do
+        self.suppose_given_dict = suppose_given
+
+    def _check_query_input(self, **kwargs):
+        for key, value in kwargs.items():
+            logging.debug(f&#34;checking key {key}={value}&#34;)
+            if key not in self.dag.nodes:
+                raise ValueError(f&#34;node &#39;{key}&#39; does not exist in original dag&#34;)
+            if value not in self.dag.df[key].values:
+                raise ValueError(f&#34;value {value} does not occur for node {key}&#34;)
+            if key in {**self.suppose_do_dict, **self.suppose_given_dict}.keys():
+                raise ValueError(f&#34;{key} is already used in this query&#34;)
+
+    def inference_dag(self):
+        &#34;&#34;&#34;
+        This is a DAG created from the original but has been altered
+        to accomodate `do-calculus`.
+        &#34;&#34;&#34;
+        infer_dag = DAG(self.dag.df.copy())
+        logging.debug(f&#34;constructing copy of original DAG nodes: {infer_dag.nodes}&#34;)
+        for n1, n2 in self.dag.edges:
+            if n2 not in self.suppose_do_dict.keys():
+                infer_dag.add_edge(n1, n2)
+            else:
+                logging.debug(f&#34;edge {n1} -&gt; {n2} ignored because of do operator&#34;)
+        logging.debug(f&#34;original DAG copied&#34;)
+        return infer_dag
+
+    def when(self, query):
+        &#34;&#34;&#34;
+        With `when` you can specify what was observed.
+
+        ## Inputs
+
+        - **query**: query of what was observed before.
+        &#34;&#34;&#34;
+        if self.orig_query is not None:
+            raise ValueError(&#34;SupposeQuery already has a `.when` value assigned.&#34;)
+        return SupposeQuery(dag=self.dag, when=query, suppose_do=self.suppose_do_dict,
+                            suppose_given=self.suppose_given_dict)
+
+    def suppose_do(self, **kwargs):
+        &#34;&#34;&#34;
+        With `suppose_do` you can specify the &#34;what if&#34; part after seeing
+        the facts seen before in the `when` statement. Note that these &#34;what if&#34;
+        scenarios are enforced, not given.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do={**self.suppose_do_dict, **kwargs},
+                            suppose_given=self.suppose_given_dict)
+
+    def suppose_given(self, **kwargs):
+        &#34;&#34;&#34;
+        With `suppose_do` you can specify the &#34;what if&#34; part after seeing
+        the facts seen before in the `when` statement. Note that these &#34;what if&#34;
+        scenarios are given, not enforced.
+
+        ## Inputs
+
+        - **kwargs**: key-value pairs of given items.
+        &#34;&#34;&#34;
+        self._check_query_input(**kwargs)
+        return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do=self.suppose_do_dict,
+                            suppose_given={**self.suppose_given_dict, **kwargs})
+
+    def infer(self, give_table=False):
+        &#34;&#34;&#34;
+        Run the inference on the graph given the current query.
+
+        ## Inputs
+
+        - **give_table**: Instead of calculating marginal probabilities and
+        returning a dictionary, return a pandas table instead. Defaults to `False`.
+        &#34;&#34;&#34;
+        if self.orig_query is None:
+            raise ValueError(&#34;SupposeQuery needs a `when` parameter defined.&#34;)
+        dag_copy = self.dag.copy().cache()
+        orig_query_table = self.orig_query.infer(give_table=True)
+        names_to_omit = list(self.orig_query.given_dict.keys()) + list(self.orig_query.do_dict.keys())
+        names_to_join = [n for n in self.orig_query.dag.nodes if n not in names_to_omit]
+
+        for node in names_to_join:
+            associated_table = dag_copy.prob_tables[node]
+            colnames = list(associated_table.columns)
+            res = (orig_query_table[colnames]
+                   .groupby([_ for _ in colnames if _ != &#34;prob&#34;])
+                   .sum()[&#34;prob&#34;]
+                   .reset_index())
+            dag_copy.prob_tables[node] = res
+
+        new_query = Query(dag=dag_copy, given=self.suppose_given_dict, do=self.suppose_do_dict)
+
+        return new_query.infer(give_table=give_table)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="brent.query.SupposeQuery.__init__"><code class="name flex">
+<span>def <span class="ident">__init__</span></span>(<span>self, dag, when=None, suppose_do=None, suppose_given=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><h2 id="inputs">Inputs:</h2>
+<ul>
+<li><strong>dag</strong>: the <code>DAG</code> object to base the query on</li>
+<li><strong>when</strong>: the observations we saw "before"</li>
+<li><strong>suppose_do</strong>: the things we might enforce "in hindsight"</li>
+<li><strong>suppose_given</strong>: the things we might witness "in hindsight"</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def __init__(self, dag, when=None, suppose_do=None, suppose_given=None):
+    &#34;&#34;&#34;
+    ## Inputs:
+
+    - **dag**: the `DAG` object to base the query on
+    - **when**: the observations we saw &#34;before&#34;
+    - **suppose_do**: the things we might enforce &#34;in hindsight&#34;
+    - **suppose_given**: the things we might witness &#34;in hindsight&#34;
+    &#34;&#34;&#34;
+    self.dag = dag
+    self.orig_query = when
+    if not suppose_do:
+        suppose_do = dict()
+    if not suppose_given:
+        suppose_given = dict()
+    self.suppose_do_dict = suppose_do
+    self.suppose_given_dict = suppose_given</code></pre>
+</details>
+</dd>
+<dt id="brent.query.SupposeQuery.infer"><code class="name flex">
+<span>def <span class="ident">infer</span></span>(<span>self, give_table=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Run the inference on the graph given the current query.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>give_table</strong>: Instead of calculating marginal probabilities and
+returning a dictionary, return a pandas table instead. Defaults to <code>False</code>.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def infer(self, give_table=False):
+    &#34;&#34;&#34;
+    Run the inference on the graph given the current query.
+
+    ## Inputs
+
+    - **give_table**: Instead of calculating marginal probabilities and
+    returning a dictionary, return a pandas table instead. Defaults to `False`.
+    &#34;&#34;&#34;
+    if self.orig_query is None:
+        raise ValueError(&#34;SupposeQuery needs a `when` parameter defined.&#34;)
+    dag_copy = self.dag.copy().cache()
+    orig_query_table = self.orig_query.infer(give_table=True)
+    names_to_omit = list(self.orig_query.given_dict.keys()) + list(self.orig_query.do_dict.keys())
+    names_to_join = [n for n in self.orig_query.dag.nodes if n not in names_to_omit]
+
+    for node in names_to_join:
+        associated_table = dag_copy.prob_tables[node]
+        colnames = list(associated_table.columns)
+        res = (orig_query_table[colnames]
+               .groupby([_ for _ in colnames if _ != &#34;prob&#34;])
+               .sum()[&#34;prob&#34;]
+               .reset_index())
+        dag_copy.prob_tables[node] = res
+
+    new_query = Query(dag=dag_copy, given=self.suppose_given_dict, do=self.suppose_do_dict)
+
+    return new_query.infer(give_table=give_table)</code></pre>
+</details>
+</dd>
+<dt id="brent.query.SupposeQuery.inference_dag"><code class="name flex">
+<span>def <span class="ident">inference_dag</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This is a DAG created from the original but has been altered
+to accomodate <code>do-calculus</code>.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def inference_dag(self):
+    &#34;&#34;&#34;
+    This is a DAG created from the original but has been altered
+    to accomodate `do-calculus`.
+    &#34;&#34;&#34;
+    infer_dag = DAG(self.dag.df.copy())
+    logging.debug(f&#34;constructing copy of original DAG nodes: {infer_dag.nodes}&#34;)
+    for n1, n2 in self.dag.edges:
+        if n2 not in self.suppose_do_dict.keys():
+            infer_dag.add_edge(n1, n2)
+        else:
+            logging.debug(f&#34;edge {n1} -&gt; {n2} ignored because of do operator&#34;)
+    logging.debug(f&#34;original DAG copied&#34;)
+    return infer_dag</code></pre>
+</details>
+</dd>
+<dt id="brent.query.SupposeQuery.suppose_do"><code class="name flex">
+<span>def <span class="ident">suppose_do</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>With <code>suppose_do</code> you can specify the "what if" part after seeing
+the facts seen before in the <code>when</code> statement. Note that these "what if"
+scenarios are enforced, not given.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>kwargs</strong>: key-value pairs of given items.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def suppose_do(self, **kwargs):
+    &#34;&#34;&#34;
+    With `suppose_do` you can specify the &#34;what if&#34; part after seeing
+    the facts seen before in the `when` statement. Note that these &#34;what if&#34;
+    scenarios are enforced, not given.
+
+    ## Inputs
+
+    - **kwargs**: key-value pairs of given items.
+    &#34;&#34;&#34;
+    self._check_query_input(**kwargs)
+    return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do={**self.suppose_do_dict, **kwargs},
+                        suppose_given=self.suppose_given_dict)</code></pre>
+</details>
+</dd>
+<dt id="brent.query.SupposeQuery.suppose_given"><code class="name flex">
+<span>def <span class="ident">suppose_given</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>With <code>suppose_do</code> you can specify the "what if" part after seeing
+the facts seen before in the <code>when</code> statement. Note that these "what if"
+scenarios are given, not enforced.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>kwargs</strong>: key-value pairs of given items.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def suppose_given(self, **kwargs):
+    &#34;&#34;&#34;
+    With `suppose_do` you can specify the &#34;what if&#34; part after seeing
+    the facts seen before in the `when` statement. Note that these &#34;what if&#34;
+    scenarios are given, not enforced.
+
+    ## Inputs
+
+    - **kwargs**: key-value pairs of given items.
+    &#34;&#34;&#34;
+    self._check_query_input(**kwargs)
+    return SupposeQuery(dag=self.dag, when=self.orig_query, suppose_do=self.suppose_do_dict,
+                        suppose_given={**self.suppose_given_dict, **kwargs})</code></pre>
+</details>
+</dd>
+<dt id="brent.query.SupposeQuery.when"><code class="name flex">
+<span>def <span class="ident">when</span></span>(<span>self, query)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>With <code>when</code> you can specify what was observed.</p>
+<h2 id="inputs">Inputs</h2>
+<ul>
+<li><strong>query</strong>: query of what was observed before.</li>
+</ul></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def when(self, query):
+    &#34;&#34;&#34;
+    With `when` you can specify what was observed.
+
+    ## Inputs
+
+    - **query**: query of what was observed before.
+    &#34;&#34;&#34;
+    if self.orig_query is not None:
+        raise ValueError(&#34;SupposeQuery already has a `.when` value assigned.&#34;)
+    return SupposeQuery(dag=self.dag, when=query, suppose_do=self.suppose_do_dict,
+                        suppose_given=self.suppose_given_dict)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -778,14 +1101,23 @@ q1.sample(100)
 <h4><code><a title="brent.query.Query" href="#brent.query.Query">Query</a></code></h4>
 <ul class="two-column">
 <li><code><a title="brent.query.Query.__init__" href="#brent.query.Query.__init__">__init__</a></code></li>
-<li><code><a title="brent.query.Query.counterfact" href="#brent.query.Query.counterfact">counterfact</a></code></li>
 <li><code><a title="brent.query.Query.do" href="#brent.query.Query.do">do</a></code></li>
 <li><code><a title="brent.query.Query.given" href="#brent.query.Query.given">given</a></code></li>
 <li><code><a title="brent.query.Query.infer" href="#brent.query.Query.infer">infer</a></code></li>
-<li><code><a title="brent.query.Query.infer_counterfact" href="#brent.query.Query.infer_counterfact">infer_counterfact</a></code></li>
 <li><code><a title="brent.query.Query.inference_dag" href="#brent.query.Query.inference_dag">inference_dag</a></code></li>
 <li><code><a title="brent.query.Query.plot" href="#brent.query.Query.plot">plot</a></code></li>
 <li><code><a title="brent.query.Query.sample" href="#brent.query.Query.sample">sample</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="brent.query.SupposeQuery" href="#brent.query.SupposeQuery">SupposeQuery</a></code></h4>
+<ul class="two-column">
+<li><code><a title="brent.query.SupposeQuery.__init__" href="#brent.query.SupposeQuery.__init__">__init__</a></code></li>
+<li><code><a title="brent.query.SupposeQuery.infer" href="#brent.query.SupposeQuery.infer">infer</a></code></li>
+<li><code><a title="brent.query.SupposeQuery.inference_dag" href="#brent.query.SupposeQuery.inference_dag">inference_dag</a></code></li>
+<li><code><a title="brent.query.SupposeQuery.suppose_do" href="#brent.query.SupposeQuery.suppose_do">suppose_do</a></code></li>
+<li><code><a title="brent.query.SupposeQuery.suppose_given" href="#brent.query.SupposeQuery.suppose_given">suppose_given</a></code></li>
+<li><code><a title="brent.query.SupposeQuery.when" href="#brent.query.SupposeQuery.when">when</a></code></li>
 </ul>
 </li>
 </ul>

@@ -82,7 +82,13 @@ q.plot()
 </code></pre>
 <p>But we can still make a pretty plot appear.</p>
 <p><img alt="" src="https://github.com/koaning/brent/blob/master/images/complex-query.png?raw=true"></p>
-<p>Inference is still done in the same way. Note that you can
+<p>Note that the plot demonstrates which edges are affected with the <code>do</code>
+operation by making the lines dashed and gray. Nodes that have information
+injected in them have double circles and edges that don't contribute to
+the inference are grayed out. In this case, because <code>d</code> is given and because <code>a</code>
+is enforced with a <code>do()</code> operation the arc between <code>a -&gt; d</code> does not participate
+in the inference much.</p>
+<p>Inference is still done in the same way as before. Note that you can
 get marginal probabilities in json format but you can also
 get pass <code>give_table=True</code> if you prefer to get a full probability
 table. This will give a pandas dataframe.</p>
@@ -180,7 +186,14 @@ But we can still make a pretty plot appear.
 
 ![](https://github.com/koaning/brent/blob/master/images/complex-query.png?raw=true)
 
-Inference is still done in the same way. Note that you can
+Note that the plot demonstrates which edges are affected with the `do`
+operation by making the lines dashed and gray. Nodes that have information
+injected in them have double circles and edges that don&#39;t contribute to
+the inference are grayed out. In this case, because `d` is given and because `a`
+is enforced with a `do()` operation the arc between `a -&gt; d` does not participate
+in the inference much.
+
+Inference is still done in the same way as before. Note that you can
 get marginal probabilities in json format but you can also
 get pass `give_table=True` if you prefer to get a full probability
 table. This will give a pandas dataframe.
@@ -193,7 +206,7 @@ q.infer(give_table=True)
 
 &#34;&#34;&#34;
 
-from .query import Query
+from .query import Query, SupposeQuery
 from .graph import DAG</code></pre>
 </details>
 </section>

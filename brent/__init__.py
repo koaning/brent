@@ -86,7 +86,14 @@ But we can still make a pretty plot appear.
 
 ![](https://github.com/koaning/brent/blob/master/images/complex-query.png?raw=true)
 
-Inference is still done in the same way. Note that you can
+Note that the plot demonstrates which edges are affected with the `do`
+operation by making the lines dashed and gray. Nodes that have information
+injected in them have double circles and edges that don't contribute to
+the inference are grayed out. In this case, because `d` is given and because `a`
+is enforced with a `do()` operation the arc between `a -> d` does not participate
+in the inference much.
+
+Inference is still done in the same way as before. Note that you can
 get marginal probabilities in json format but you can also
 get pass `give_table=True` if you prefer to get a full probability
 table. This will give a pandas dataframe.
