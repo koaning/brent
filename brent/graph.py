@@ -274,6 +274,33 @@ class DAG:
         logging.debug(f"created connection {source} -> {sink}")
         return self
 
+    def remove_edge(self, source, sink) -> 'DAG':
+        """
+        Removes an existing edge from the graph.
+
+        ## Input
+
+        - **source**: Name of a node in the graph
+        - **sink**: Name of a node in the graph
+
+        ## Example
+
+        ```
+        from brent import DAG
+        from brent.common import make_fake_df
+
+        (DAG(dataframe=make_fake_df(4))
+            .add_edge("a", "b")
+            .remove_edge("a", "b"))
+        ```
+        """
+        try:
+            self.graph.remove_edge(source, sink)
+        except nx.NetworkXError:
+            raise ValueError(f"edge {source} -> {sink} not present in the DAG")
+        logging.debug(f"removed connection {source} -> {sink}")
+        return self
+
     def children(self, node):
         """
         Return the children of a node.

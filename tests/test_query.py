@@ -84,6 +84,13 @@ def test_expected_output_query2(simple_dag):
     assert output["b"][1] == pytest.approx(0.50, abs=0.001)
 
 
+def test_expected_output_query3(simple_dag):
+    output = Query(simple_dag).do(b=1).infer()
+    assert output["b"][1] == pytest.approx(1.0, abs=0.001)
+    assert output["a"][0] == pytest.approx(0.5, abs=0.001)
+    assert output["a"][1] == pytest.approx(0.5, abs=0.001)
+
+
 @pytest.mark.parametrize("n", [100, 1000, 10000])
 def test_query_sample_1(simple_dag, n):
     q1 = Query(simple_dag).given(a=1)

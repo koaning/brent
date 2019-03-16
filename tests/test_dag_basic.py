@@ -43,6 +43,11 @@ def test_connections2(small_df):
     assert set(dag.connections("c")) == {"b"}
 
 
+def test_remove_connections(small_df):
+    dag = DAG(small_df).add_edge("a", "b").remove_edge("a", "b")
+    assert set(dag.connections("a")) == set()
+
+
 def test_copy(small_df):
     dag1 = DAG(small_df).add_edge("a", "b").add_edge("c", "b")
     dag2 = DAG(small_df).add_edge("a", "b").add_edge("c", "b").add_edge("a", "c")
