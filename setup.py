@@ -12,7 +12,7 @@ base_packages = ["numpy>=1.15.4", "scipy>=1.2.0", "scikit-learn>=0.20.2",
 
 setup(
     name="brent",
-    version="0.2.3",
+    version="0.2.4",
     packages=find_packages(exclude=['data', 'notebooks']),
     long_description=read('readme.md'),
     long_description_content_type='text/markdown',
