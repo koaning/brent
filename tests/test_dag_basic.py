@@ -55,6 +55,9 @@ def test_copy(small_df):
     assert dag1._df.equals(dag1_copy._df)
     assert dag2._df.equals(dag2_copy._df)
 
+    dag1_copy.add_edge("a", "c")
+    assert set(dag1_copy.edges) != set(dag1.edges)
+
 
 def test_dag_remains_dag(small_df):
     dag = DAG(small_df).add_edge("a", "b").add_edge("b", "c")

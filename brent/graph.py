@@ -100,7 +100,8 @@ class DAG:
     def copy(self):
         """Returns a copy of the current DAG."""
         new_dag = DAG(self._df)
-        new_dag.graph = self.graph
+        new_dag.graph = self.graph.copy()
+
         return new_dag
 
     def edge_direction(self, node_a, node_b):
