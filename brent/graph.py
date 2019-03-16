@@ -45,9 +45,9 @@ class DAG:
         dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
         ```
         """
-        self.df = dataframe
+        self._df = dataframe
         self.graph = nx.DiGraph()
-        for node in self.df.columns:
+        for node in self._df.columns:
             self.graph.add_node(node)
         self.cached = False
         self.prob_tables = {}
@@ -86,7 +86,11 @@ class DAG:
     @property
     def nodes(self):
         """The nodes of the graph."""
-        return list(self.graph.nodes)
+        return set(self.graph.nodes)
+
+    def values_for_node(self, node):
+        """The values that a node in the graph can take"""
+        return set(self._df[node].values)
 
     @property
     def edges(self):
@@ -95,8 +99,8 @@ class DAG:
 
     def copy(self):
         """Returns a copy of the current DAG."""
-        new_dag = DAG(self.df)
-        new_dag.graph = self.graph.copy()
+        new_dag = DAG(self._df)
+        new_dag.graph = self.graph
         return new_dag
 
     def edge_direction(self, node_a, node_b):
@@ -178,7 +182,7 @@ class DAG:
         if name in self.prob_tables:
             return self.prob_tables[name]
         parents = self.parents(name)
-        tbl = self.df.copy()
+        tbl = self._df.copy()
         logging.debug(f"creating node table node={name} parents={parents}")
 
         def calculate_parents_size(dataf, groups=[]):
@@ -255,9 +259,9 @@ class DAG:
             .add_edge("c", "d"))
         ```
         """
-        if source not in self.df.columns:
+        if source not in self._df.columns:
             raise ValueError(f"cause {source} not in dataframe")
-        if sink not in self.df.columns:
+        if sink not in self._df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
         if self.cached:
             raise RuntimeError("Cannot change a graph when the dag is baked.")

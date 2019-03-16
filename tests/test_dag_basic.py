@@ -52,8 +52,8 @@ def test_copy(small_df):
     assert set(dag2_copy.edges) == set(dag2.edges)
     assert set(dag1_copy.nodes) == set(dag1.nodes)
     assert set(dag2_copy.nodes) == set(dag2.nodes)
-    assert dag1.df.equals(dag1_copy.df)
-    assert dag2.df.equals(dag2_copy.df)
+    assert dag1._df.equals(dag1_copy._df)
+    assert dag2._df.equals(dag2_copy._df)
 
 
 def test_dag_remains_dag(small_df):
