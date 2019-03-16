@@ -93,14 +93,14 @@ class Query:
         self._check_query_input(**kwargs)
         return Query(dag=self.dag, given=self.given_dict, do={**self.do_dict, **kwargs})
 
-    def plot(self, emphesize_do=True):
+    def plot(self, emphesize_do=True, **kwargs):
         """
         A pretty plotting function. Given nodes have double circles.
         Nodes with `do` operations on them will have in-going arcs grayed.
         """
         givens = self.given_dict.keys()
         dos = self.do_dict.keys()
-        d = Digraph()
+        d = Digraph(**kwargs)
         d.attr(rankdir='LR')
         d.attr('node', shape='circle')
         for idx, n in enumerate(self.dag.graph.nodes):
