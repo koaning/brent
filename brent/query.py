@@ -206,7 +206,7 @@ class SupposeQuery:
             logging.debug(f"checking key {key}={value}")
             if key not in self.dag.nodes:
                 raise ValueError(f"node '{key}' does not exist in original dag")
-            if value not in self.dag.values_for_node(key).values:
+            if value not in self.dag.values_for_node(key):
                 raise ValueError(f"value {value} does not occur for node {key}")
             if key in {**self.suppose_do_dict, **self.suppose_given_dict}.keys():
                 raise ValueError(f"{key} is already used in this query")
