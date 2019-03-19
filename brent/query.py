@@ -51,7 +51,7 @@ class Query:
         This is a DAG created from the original but has been altered
         to accomodate `do-calculus`.
         """
-        infer_dag = DAG(self.dag.df.copy())
+        infer_dag = self.dag.copy()
         logging.debug(f"constructing copy of original DAG nodes: {infer_dag.nodes}")
         for n1, n2 in self.dag.edges:
             if n2 not in self.do_dict.keys():
@@ -131,7 +131,7 @@ class Query:
         returning a dictionary, return a pandas table instead. Defaults to `False`.
         """
         logging.debug(f"about to make an inference")
-        infer_dag = self.inference_dag()
+        infer_dag = self.dag.copy()
         for node in infer_dag.nodes:
             logging.debug(f"confirming parents({node}) = {infer_dag.parents(node)}")
         marginal_table = infer_dag.marginal_table
@@ -295,4 +295,13 @@ class SupposeQuery:
 
         new_query = Query(dag=dag_copy, given=self.suppose_given_dict, do=self.suppose_do_dict)
 
-        return new_query.infer(give_table=give_table)
+        tbl = new_query.dag.marginal_table
+        given_values = {**self.suppose_given_dict, **self.suppose_do_dict}
+        for key, value in given_values.items():
+            tbl = tbl.loc[lambda d: d[key] == value]
+        tbl = tbl.assign(prob=lambda d: d.prob/d.prob.sum())
+        output = {}
+        for c in tbl.columns:
+            if c != "prob":
+                output[c] = tbl.groupby(c)['prob'].sum().to_dict()
+        return output
