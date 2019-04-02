@@ -1,3 +1,5 @@
+.PHONY: docs
+
 flake:
 	flake8 brent
 	flake8 tests
@@ -21,10 +23,10 @@ clean:
 
 check: test flake
 
-docsrv:
+docs: docfiles
 	pdoc --html --overwrite --template-dir doc-settings --http 0.0.0.0:12345 brent
 
-doc:
+docfiles:
 	pdoc --html --overwrite --template-dir doc-settings brent
 	rm -r docs
 	mkdir docs

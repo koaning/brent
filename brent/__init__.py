@@ -104,6 +104,29 @@ q.infer()
 q.infer(give_table=True)
 ```
 
+## CounterFactual Inference
+
+Let's dicuss a theoretical example that might help to explain how
+counterfactuals work. The example is not based on a "real dataset"
+but we might assume that we actually had a dataset that contains
+information about test scores in a school.
+
+The dataset contains three columns:
+
+- **study**: an indicator if the student in question studied a little, lots or not at all
+- **hard**: an indicator if the test in question was hard
+- **grade**: an indicator if the result of the test was good, a pass or a fail
+
+We will use this dataset with `brent` to ask some interesting queries.
+
+```
+from brent import Query, DAG, SupposeQuery
+from brent.datasets import simple_study_dataset
+
+simple_study_dataset().sample(5)
+```
+
+## Do-Calculus
 """
 
 from .query import Query, SupposeQuery
