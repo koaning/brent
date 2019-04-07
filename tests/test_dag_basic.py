@@ -6,7 +6,12 @@ from brent.graph import DAG
 
 @pytest.fixture()
 def small_df():
-    return pd.DataFrame({"a": [1, 0, 1, 0, 1], "b": [1, 1, 1, 0, 0], "c": [0, 0, 1, 0, 1]})
+    return pd.DataFrame({
+        "a": [1, 0, 1, 0, 1],
+        "b": [1, 1, 1, 0, 0],
+        "c": [0, 0, 1, 0, 1],
+        "count": [1, 1, 1, 1, 1],
+    })
 
 
 def test_origin_nodes_1(small_df):

@@ -7,9 +7,12 @@ from brent import Query, SupposeQuery
 
 @pytest.fixture
 def simple_dag():
-    df = pd.DataFrame({"a": [1, 1, 1, 1, 0, 0, 0, 0],
-                       "b": [0, 1, 0, 1, 1, 1, 1, 0],
-                       "c": [0, 0, 1, 0, 0, 1, 0, 1]})
+    df = pd.DataFrame({
+        "a": [1, 1, 1, 1, 0, 0, 0, 0],
+        "b": [0, 1, 0, 1, 1, 1, 1, 0],
+        "c": [0, 0, 1, 0, 0, 1, 0, 1],
+        "count": [1, 1, 1, 1, 1, 1, 1, 1],
+    })
     return DAG(df).add_edge("a", "b").add_edge("a", "c").add_edge("c", "b")
 
 

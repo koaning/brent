@@ -7,7 +7,7 @@ from brent.common import make_fake_df
 
 @pytest.fixture
 def dag_with_two_values():
-    return (DAG(make_fake_df(nodes=4))
+    return (DAG.from_observations(make_fake_df(nodes=4))
             .add_edge("a", "d")
             .add_edge("b", "d")
             .add_edge("a", "b")
@@ -16,7 +16,7 @@ def dag_with_two_values():
 
 @pytest.fixture
 def dag_with_four_values():
-    return (DAG(make_fake_df(nodes=4, rows=2000, values=4))
+    return (DAG.from_observations(make_fake_df(nodes=4, rows=2000, values=4))
             .add_edge("a", "d")
             .add_edge("b", "d")
             .add_edge("a", "b")

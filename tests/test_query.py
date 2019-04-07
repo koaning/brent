@@ -1,14 +1,14 @@
-import pytest
 import pandas as pd
+import pytest
 
+from brent.common import make_fake_df
 from brent.graph import DAG
 from brent.query import Query
-from brent.common import make_fake_df
 
 
 @pytest.fixture
 def dag():
-    return (DAG(make_fake_df(7))
+    return (DAG.from_observations(make_fake_df(7))
             .add_edge("e", "a")
             .add_edge("e", "d")
             .add_edge("a", "d")
@@ -22,9 +22,12 @@ def dag():
 
 @pytest.fixture
 def simple_dag():
-    df = pd.DataFrame({"a": [1, 1, 1, 1, 0, 0, 0, 0],
-                       "b": [0, 1, 0, 1, 1, 1, 1, 0],
-                       "c": [0, 0, 1, 0, 0, 1, 0, 1]})
+    df = pd.DataFrame({
+        "a": [1, 1, 1, 1, 0, 0, 0, 0],
+        "b": [0, 1, 0, 1, 1, 1, 1, 0],
+        "c": [0, 0, 1, 0, 0, 1, 0, 1],
+        "count": [1, 1, 1, 1, 1, 1, 1, 1],
+    })
     return DAG(df).add_edge("a", "b").add_edge("a", "c").add_edge("c", "b")
 
 

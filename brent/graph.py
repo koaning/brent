@@ -33,7 +33,45 @@ class DAG:
 
         Inputs:
 
-        - **dataframe**: pandas object that contains all variables
+        - **dataframe**: pandas object that contains all variables and a `count` column containing the
+                         amount of observations for that combination of variables
+
+        Example:
+
+        ```
+        from brent import DAG
+        import pandas as pd
+        # let's start with a new dataset
+        df = pd.DataFrame({
+            "a": [1, 1, 1, 1, 0, 0, 0, 0],
+            "b": [0, 1, 0, 1, 1, 1, 1, 0],
+            "c": [0, 0, 1, 0, 0, 1, 0, 1],
+            "d": [1, 1, 0, 1, 0, 0, 0, 0],
+            "e": [1, 1, 1, 1, 0, 0, 0, 0],
+            "count": [1, 1, 1, 1, 1, 1, 1, 1]
+        })
+
+        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        ```
+        """
+        if 'count' not in dataframe.columns:
+            raise ValueError('Dag constructor dataframe should contain a `count` column containing the amount of times '
+                             'the values in the other columns are observed')
+        self._df = dataframe
+        self.graph = nx.DiGraph()
+        for node in dataframe.drop(columns='count').columns:
+            self.graph.add_node(node)
+        self.cached = False
+        self.prob_tables = {}
+
+    @classmethod
+    def from_observations(cls, dataframe):
+        """
+        Create a new DAG from a dataframe containing observations.
+
+        Inputs:
+
+        - **dataframe**: pandas object that contains all variables where every row is a separate observation
 
         Example:
 
@@ -42,15 +80,10 @@ class DAG:
         from brent.common import make_fake_df
         # let's start with a new dataset
         df = make_fake_df(4)
-        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        dag = DAG.from_observations(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
         ```
         """
-        self._df = dataframe
-        self.graph = nx.DiGraph()
-        for node in self._df.columns:
-            self.graph.add_node(node)
-        self.cached = False
-        self.prob_tables = {}
+        return cls(dataframe.groupby(list(dataframe.columns)).agg(len).reset_index().rename(columns={0: 'count'}))
 
     @property
     def undirected_graph(self):
@@ -188,7 +221,6 @@ class DAG:
 
         def calculate_parents_size(dataf, groups=[]):
             return (dataf
-                    .assign(count=1)
                     .groupby(groups)
                     .transform(np.sum)['count'])
 
