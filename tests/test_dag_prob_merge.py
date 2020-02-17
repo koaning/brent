@@ -1,6 +1,6 @@
+import pandas as pd
 import pytest
 from pytest import fixture, approx
-import pandas as pd
 
 from brent.common import normalise
 from brent.graph import DAG
@@ -8,11 +8,14 @@ from brent.graph import DAG
 
 @fixture
 def basic_dag():
-    df = pd.DataFrame({"a": [1, 1, 1, 1, 0, 0, 0, 0],
-                       "b": [0, 1, 0, 1, 1, 1, 1, 0],
-                       "c": [0, 0, 1, 0, 0, 1, 0, 1],
-                       "d": [1, 1, 0, 1, 0, 0, 0, 0],
-                       "e": [1, 1, 1, 1, 0, 0, 0, 0]})
+    df = pd.DataFrame({
+        "a": [1, 1, 1, 1, 0, 0, 0, 0],
+        "b": [0, 1, 0, 1, 1, 1, 1, 0],
+        "c": [0, 0, 1, 0, 0, 1, 0, 1],
+        "d": [1, 1, 0, 1, 0, 0, 0, 0],
+        "e": [1, 1, 1, 1, 0, 0, 0, 0],
+        "count": [1, 1, 1, 1, 1, 1, 1, 1],
+    })
     return DAG(df).add_edge("a", "b").add_edge("a", "c").add_edge("c", "b")
 
 
@@ -25,7 +28,8 @@ def test_marginal_table(basic_dag):
                 .pipe(basic_dag.merge_probs, that_df=basic_dag.calc_node_table("e")))
     a = marginal.sort_values(colnames).reset_index()[colnames + ["prob"]]
     b = basic_dag.marginal_table.sort_values(colnames).reset_index()[colnames + ["prob"]]
-    assert a.equals(b)
+
+    pd.testing.assert_frame_equal(a, b)
 
 
 def test_marginal_table_values(basic_dag):
@@ -46,26 +50,26 @@ def test_calc_node_table(basic_dag):
 
 def test_merge_probs_simple(basic_dag):
     res1 = (basic_dag.marginal_table
-            .groupby(['d'])['prob'].mean()
-            .reset_index()
-            .assign(prob=lambda d: normalise(d.prob))
-            .to_dict("list")["prob"])
+        .groupby(['d'])['prob'].mean()
+        .reset_index()
+        .assign(prob=lambda d: normalise(d.prob))
+        .to_dict("list")["prob"])
     assert res1[0] == approx(.625, abs=0.01)
     assert res1[1] == approx(.375, abs=0.01)
 
     res2 = (basic_dag.marginal_table
-            .groupby(['e'])['prob'].mean()
-            .reset_index()
-            .assign(prob=lambda d: normalise(d.prob))
-            .to_dict("list")["prob"])
+        .groupby(['e'])['prob'].mean()
+        .reset_index()
+        .assign(prob=lambda d: normalise(d.prob))
+        .to_dict("list")["prob"])
     assert res2[0] == approx(.5, abs=0.01)
     assert res2[1] == approx(.5, abs=0.01)
 
     res3 = (basic_dag.marginal_table
-            .groupby(['a'])['prob'].mean()
-            .reset_index()
-            .assign(prob=lambda d: normalise(d.prob))
-            .to_dict("list")["prob"])
+        .groupby(['a'])['prob'].mean()
+        .reset_index()
+        .assign(prob=lambda d: normalise(d.prob))
+        .to_dict("list")["prob"])
     assert res3[0] == approx(.5, abs=0.01)
     assert res3[1] == approx(.5, abs=0.01)
 

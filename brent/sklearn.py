@@ -29,13 +29,13 @@ class BrentClassifier(BaseEstimator, ClassifierMixin):
 
         A classifier that can be used in scikit-learn pipelines.
         """
-        if to_predict not in dag.df.columns:
+        if to_predict not in dag.nodes:
             raise ValueError(f"column {to_predict} not found in DAG {dag}")
         self.dag = dag
         self.to_predict = to_predict
-        self.to_use = [_ for _ in self.dag.df.columns if _ != self.to_predict]
+        self.to_use = [node for node in self.dag.nodes if node != self.to_predict]
         self.query = None
-        self.k = self.dag.df[to_predict].nunique()
+        self.k = len(self.dag.values_for_node(to_predict))
 
     def _check_dataframe(self, X):
         for node in self.dag.nodes:

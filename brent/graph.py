@@ -33,7 +33,45 @@ class DAG:
 
         Inputs:
 
-        - **dataframe**: pandas object that contains all variables
+        - **dataframe**: pandas object that contains all variables and a `count` column containing the
+                         amount of observations for that combination of variables
+
+        Example:
+
+        ```
+        from brent import DAG
+        import pandas as pd
+        # let's start with a new dataset
+        df = pd.DataFrame({
+            "a": [1, 1, 1, 1, 0, 0, 0, 0],
+            "b": [0, 1, 0, 1, 1, 1, 1, 0],
+            "c": [0, 0, 1, 0, 0, 1, 0, 1],
+            "d": [1, 1, 0, 1, 0, 0, 0, 0],
+            "e": [1, 1, 1, 1, 0, 0, 0, 0],
+            "count": [1, 1, 1, 1, 1, 1, 1, 1]
+        })
+
+        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        ```
+        """
+        if 'count' not in dataframe.columns:
+            raise ValueError('Dag constructor dataframe should contain a `count` column containing the amount of times '
+                             'the values in the other columns are observed')
+        self._df = dataframe
+        self.graph = nx.DiGraph()
+        for node in dataframe.drop(columns='count').columns:
+            self.graph.add_node(node)
+        self.cached = False
+        self.prob_tables = {}
+
+    @classmethod
+    def from_observations(cls, dataframe):
+        """
+        Create a new DAG from a dataframe containing observations.
+
+        Inputs:
+
+        - **dataframe**: pandas object that contains all variables where every row is a separate observation
 
         Example:
 
@@ -42,15 +80,10 @@ class DAG:
         from brent.common import make_fake_df
         # let's start with a new dataset
         df = make_fake_df(4)
-        dag = DAG(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
+        dag = DAG.from_observations(df).add_edge("a", "b").add_edge("b", "c").add_edge("c","d")
         ```
         """
-        self.df = dataframe
-        self.graph = nx.DiGraph()
-        for node in self.df.columns:
-            self.graph.add_node(node)
-        self.cached = False
-        self.prob_tables = {}
+        return cls(dataframe.groupby(list(dataframe.columns)).agg(len).reset_index().rename(columns={0: 'count'}))
 
     @property
     def undirected_graph(self):
@@ -86,7 +119,11 @@ class DAG:
     @property
     def nodes(self):
         """The nodes of the graph."""
-        return list(self.graph.nodes)
+        return set(self.graph.nodes)
+
+    def values_for_node(self, node):
+        """The values that a node in the graph can take"""
+        return set(self._df[node].values)
 
     @property
     def edges(self):
@@ -95,8 +132,9 @@ class DAG:
 
     def copy(self):
         """Returns a copy of the current DAG."""
-        new_dag = DAG(self.df)
+        new_dag = DAG(self._df)
         new_dag.graph = self.graph.copy()
+
         return new_dag
 
     def edge_direction(self, node_a, node_b):
@@ -178,12 +216,11 @@ class DAG:
         if name in self.prob_tables:
             return self.prob_tables[name]
         parents = self.parents(name)
-        tbl = self.df.copy()
+        tbl = self._df.copy()
         logging.debug(f"creating node table node={name} parents={parents}")
 
         def calculate_parents_size(dataf, groups=[]):
             return (dataf
-                    .assign(count=1)
                     .groupby(groups)
                     .transform(np.sum)['count'])
 
@@ -255,9 +292,9 @@ class DAG:
             .add_edge("c", "d"))
         ```
         """
-        if source not in self.df.columns:
+        if source not in self._df.columns:
             raise ValueError(f"cause {source} not in dataframe")
-        if sink not in self.df.columns:
+        if sink not in self._df.columns:
             raise ValueError(f"effect {sink} not in dataframe")
         if self.cached:
             raise RuntimeError("Cannot change a graph when the dag is baked.")
@@ -267,6 +304,33 @@ class DAG:
             raise ValueError(f"edge {source} -> {sink} causes DAG to get cycle")
         self.graph.add_edge(source, sink)
         logging.debug(f"created connection {source} -> {sink}")
+        return self
+
+    def remove_edge(self, source, sink) -> 'DAG':
+        """
+        Removes an existing edge from the graph.
+
+        ## Input
+
+        - **source**: Name of a node in the graph
+        - **sink**: Name of a node in the graph
+
+        ## Example
+
+        ```
+        from brent import DAG
+        from brent.common import make_fake_df
+
+        (DAG(dataframe=make_fake_df(4))
+            .add_edge("a", "b")
+            .remove_edge("a", "b"))
+        ```
+        """
+        try:
+            self.graph.remove_edge(source, sink)
+        except nx.NetworkXError:
+            raise ValueError(f"edge {source} -> {sink} not present in the DAG")
+        logging.debug(f"removed connection {source} -> {sink}")
         return self
 
     def children(self, node):
